@@ -1,0 +1,40 @@
+<html>
+
+    <head>
+
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <title>Wiresterizer</title>
+
+<style>
+.wiresterizer-canvas {
+    background-color: #000000;
+}
+
+/* https://stackoverflow.com/a/14816807 */
+.wiresterizer-center {
+    width: 640px;
+    height: 480px;
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+
+    max-width: 100%;
+    max-height: 100%;
+    overflow: auto;
+}
+</style>
+
+        <script src="wiresterizer.js"></script> 
+
+    </head>
+
+    <body>
+        <canvas id="wiresterizer" width="640" height="480" class="wiresterizer-center wiresterizer-canvas" style=""></canvas>
+    </body>
+
+</html>
