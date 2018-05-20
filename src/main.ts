@@ -1,6 +1,9 @@
 // Ugly hack to force early Renderer class declaration
 /// <reference path="renderer.ts"/>
 
+// Ugly hack to force early Model class declaration
+/// <reference path="model.ts"/>
+
 // Ugly hack to force early model array declaration
 /// <reference path="cube.ts"/>
 
@@ -13,7 +16,12 @@ let wireValue = 0xFF;   // white
 
 // Create renderer
 let canvas = element(canvasID) as HTMLCanvasElement;
-let renderer = new Renderer(canvas, frameRate, bgValue, wireValue);
+let renderer = new WireRenderer(canvas, frameRate, bgValue, wireValue);
+
+
+// Setup scene
+let cube = new WireModel(array_cube)
+renderer.models.push(cube)
 
 
 ///////////////////////////////////////////////////////////////////////////////
