@@ -9,9 +9,6 @@ class WireModel {
     constructor(verts: Float32Array) {
         this.verts = verts;
 
-        // Quads
-        // this.num_faces = (verts.length / 3) / 4;
-
         // N-gons
         this.num_faces = 0;
         let idx = 0;

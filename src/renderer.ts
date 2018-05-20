@@ -81,66 +81,11 @@ class WireRenderer {
         // Update camera
         this.camera.updateCamMats();
 
-        // Quads
-        // // Draw models
-        // this.models.forEach(model => {
-        //     this.camera.viewProjectionMat.copy(this.mvpMat);
-        //     this.mvpMat.multiply(model.mat);
-
-        //     //model.mat.copy(this.mvpMat);
-        //     //this.mvpMat.multiply(this.camera.viewProjectionMat);
-
-        //     for (let face_idx = 0; face_idx < model.num_faces; ++face_idx) {
-        //         let face_base = face_idx * 12;
-
-        //         this.vert1.x = model.verts[face_base];
-        //         this.vert1.y = model.verts[face_base +  1];
-        //         this.vert1.z = model.verts[face_base +  2];
-
-        //         this.vert2.x = model.verts[face_base +  3];
-        //         this.vert2.y = model.verts[face_base +  4];
-        //         this.vert2.z = model.verts[face_base +  5];
-
-        //         this.vert3.x = model.verts[face_base +  6];
-        //         this.vert3.y = model.verts[face_base +  7];
-        //         this.vert3.z = model.verts[face_base +  8];
-
-        //         this.vert4.x = model.verts[face_base +  9];
-        //         this.vert4.y = model.verts[face_base + 10];
-        //         this.vert4.z = model.verts[face_base + 11];
-
-        //         this.mvpMat.multiplyVec3(this.vert1, this.vert1);
-        //         this.mvpMat.multiplyVec3(this.vert2, this.vert2);
-        //         this.mvpMat.multiplyVec3(this.vert3, this.vert3);
-        //         this.mvpMat.multiplyVec3(this.vert4, this.vert4);
-
-        //         let v1_c = this.toCanvas(this.vert1);
-        //         let v2_c = this.toCanvas(this.vert2);
-        //         let v3_c = this.toCanvas(this.vert3);
-        //         let v4_c = this.toCanvas(this.vert4);
-
-        //         // Drawing lines
-        //         this.drawLine(v1_c.x, v1_c.y, v2_c.x, v2_c.y);
-        //         this.drawLine(v2_c.x, v2_c.y, v3_c.x, v3_c.y);
-        //         this.drawLine(v3_c.x, v3_c.y, v4_c.x, v4_c.y);
-        //         this.drawLine(v4_c.x, v4_c.y, v1_c.x, v1_c.y);
-
-        //         // // Drawing points for debug
-        //         // this.setPixel(v1_c.x, v1_c.y);
-        //         // this.setPixel(v2_c.x, v2_c.y);
-        //         // this.setPixel(v3_c.x, v3_c.y);
-        //         // this.setPixel(v4_c.x, v4_c.y);
-        //     }
-        // });
-
         // N-gons
         // Draw models
         this.models.forEach(model => {
             this.camera.viewProjectionMat.copy(this.mvpMat);
             this.mvpMat.multiply(model.mat);
-
-            //model.mat.copy(this.mvpMat);
-            //this.mvpMat.multiply(this.camera.viewProjectionMat);
 
             let face_base = 0;
             for (let face_idx = 0; face_idx < model.num_faces; ++face_idx) {

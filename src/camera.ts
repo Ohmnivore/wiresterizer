@@ -36,9 +36,6 @@ class WireCamera {
 
         this.viewMat = mat4.lookAt(this.position, target, new vec3([0, 1, 0]));
 
-        //this.viewMat.copy(this.viewProjectionMat);
-        //this.viewProjectionMat.multiply(this.projectionMat);
-
         this.projectionMat.copy(this.viewProjectionMat);
         this.viewProjectionMat.multiply(this.viewMat);
     }
