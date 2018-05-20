@@ -27,7 +27,7 @@ renderer.camera.setPerspective(60, renderer.screenAspectRatio, 0.01, 10000.0);
 
 renderer.camera.position.values[0] = 0.0;
 renderer.camera.position.values[1] = 0.0;
-renderer.camera.position.values[2] = 12.0;
+renderer.camera.position.values[2] = 3.0;
 
 renderer.camera.target.values[0] = 0.0;
 renderer.camera.target.values[1] = 0.0;

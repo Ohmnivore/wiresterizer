@@ -8,7 +8,19 @@ class WireModel {
 
     constructor(verts: Float32Array) {
         this.verts = verts;
-        this.num_faces = (verts.length / 3) / 4;
+
+        // Quads
+        // this.num_faces = (verts.length / 3) / 4;
+
+        // N-gons
+        this.num_faces = 0;
+        let idx = 0;
+        while (idx < verts.length) {
+            let verts_in_face = verts[idx];
+            idx += verts_in_face * 3;
+            idx++;
+            this.num_faces++;
+        }
 
         this.pos = new vec3();
         this.mat = new mat4();
