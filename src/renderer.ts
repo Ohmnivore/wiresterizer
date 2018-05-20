@@ -87,20 +87,22 @@ class WireRenderer {
             this.camera.viewProjectionMat.copy(this.mvpMat);
             this.mvpMat.multiply(model.mat);
 
-            let face_base = 0;
+            let face_addr = 0;
             for (let face_idx = 0; face_idx < model.num_faces; ++face_idx) {
-                let num_verts = model.verts[face_base];
+                let num_verts = model.verts[face_addr];
+                face_addr++;
 
-                for (let vert_idx = 0; vert_idx < num_verts - 1; ++vert_idx) {
-                    let vert_addr = vert_idx * 3;
+                for (let vert_idx = 0; vert_idx < num_verts; ++vert_idx) {
+                    let vert_1_addr = face_addr + vert_idx * 3;
+                    let vert_2_addr = face_addr + ((vert_idx + 1) % num_verts) * 3;
 
-                    this.vert1.x = model.verts[face_base + vert_addr + 1];
-                    this.vert1.y = model.verts[face_base + vert_addr + 2];
-                    this.vert1.z = model.verts[face_base + vert_addr + 3];
+                    this.vert1.x = model.verts[vert_1_addr];
+                    this.vert1.y = model.verts[vert_1_addr + 1];
+                    this.vert1.z = model.verts[vert_1_addr + 2];
 
-                    this.vert2.x = model.verts[face_base + vert_addr + 4];
-                    this.vert2.y = model.verts[face_base + vert_addr + 5];
-                    this.vert2.z = model.verts[face_base + vert_addr + 6];
+                    this.vert2.x = model.verts[vert_2_addr];
+                    this.vert2.y = model.verts[vert_2_addr + 1];
+                    this.vert2.z = model.verts[vert_2_addr + 2];
 
                     this.mvpMat.multiplyVec3(this.vert1, this.vert1);
                     this.mvpMat.multiplyVec3(this.vert2, this.vert2);
@@ -111,23 +113,7 @@ class WireRenderer {
                     this.drawLine(v1_c.x, v1_c.y, v2_c.x, v2_c.y);
                 }
 
-                this.vert1.x = model.verts[face_base + 1];
-                this.vert1.y = model.verts[face_base + 2];
-                this.vert1.z = model.verts[face_base + 3];
-
-                this.vert2.x = model.verts[face_base + (num_verts - 1) * 3 + 1];
-                this.vert2.y = model.verts[face_base + (num_verts - 1) * 3 + 2];
-                this.vert2.z = model.verts[face_base + (num_verts - 1) * 3 + 3];
-
-                this.mvpMat.multiplyVec3(this.vert1, this.vert1);
-                this.mvpMat.multiplyVec3(this.vert2, this.vert2);
-
-                let v1_c = this.toCanvas(this.vert1);
-                let v2_c = this.toCanvas(this.vert2);
-
-                this.drawLine(v1_c.x, v1_c.y, v2_c.x, v2_c.y);
-
-                face_base += 1 + num_verts * 3;
+                face_addr += num_verts * 3;
             }
         });
 
