@@ -1,3 +1,6 @@
+// Ugly hack to force early math classes declaration
+/// <reference path="tsm/tsm.ts"/>
+
 // Ugly hack to force early Renderer class declaration
 /// <reference path="renderer.ts"/>
 
@@ -19,7 +22,19 @@ let canvas = element(canvasID) as HTMLCanvasElement;
 let renderer = new WireRenderer(canvas, frameRate, bgValue, wireValue);
 
 
-// Setup scene
+// Setup scene (-Z forward, Y up)
+renderer.camera.setPerspective(60, renderer.screenAspectRatio, 0.01, 10000.0);
+
+renderer.camera.position.values[0] = 0.0;
+renderer.camera.position.values[1] = 0.0;
+renderer.camera.position.values[2] = 12.0;
+
+renderer.camera.target.values[0] = 0.0;
+renderer.camera.target.values[1] = 0.0;
+renderer.camera.target.values[2] = 0.0;
+
+renderer.camera.useDirection = false;
+
 let cube = new WireModel(array_cube)
 renderer.models.push(cube)
 
