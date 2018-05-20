@@ -28,14 +28,14 @@ def main(argv):
     with open(wire_path, "rb") as wire_file:
         with open(output_path, "w", encoding="utf8", newline="\n") as output_file:
 
-            output_file.write('var array_%s = new Float32Array(%d);\n' % (base_filename, wire_size))
+            output_file.write('var array_%s = new Float32Array(%d);\n' % (base_filename, wire_size / ELEMENT_SIZE))
 
             # Read four bytes at a time
             idx = 0
             byte = wire_file.read(ELEMENT_SIZE)
             while byte:
                 value = struct.unpack(ELEMENT_FORMAT, byte)[0]
-                output_file.write('array_%s[%d] = %d;\n' % (base_filename, idx, value))
+                output_file.write('array_%s[%d] = %f;\n' % (base_filename, idx, value))
 
                 byte = wire_file.read(ELEMENT_SIZE)
                 idx += 1
