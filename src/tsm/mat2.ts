@@ -35,7 +35,7 @@
 
 class mat2 {
 
-    private values = new Float32Array(4);
+    public values = new Float32Array(4);
 
     constructor(values: number[] | null = null) {
         if (values) {
@@ -61,7 +61,7 @@ class mat2 {
         }
     }
 
-    copy(dest: mat2 | null = null): mat2 {
+    copyTo(dest: mat2 | null = null): mat2 {
         if (!dest) dest = new mat2();
 
         for (var i = 0; i < 4; i++) {

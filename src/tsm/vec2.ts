@@ -29,7 +29,7 @@
 
 class vec2 {
 
-    private values = new Float32Array(2);
+    public values = new Float32Array(2);
 
     get x(): number {
         return this.values[0];
@@ -74,18 +74,14 @@ class vec2 {
         this.y = 0;
     }
 
-    copy(dest: vec2 | null = null): vec2 {
-        if (!dest) dest = new vec2();
-
+    copyTo(dest: vec2): vec2 {
         dest.x = this.x;
         dest.y = this.y;
 
         return dest;
     }
 
-    negate(dest: vec2 | null = null): vec2 {
-        if (!dest) dest = this;
-
+    negate(dest: vec2): vec2 {
         dest.x = -this.x;
         dest.y = -this.y;
 
@@ -141,18 +137,14 @@ class vec2 {
         return this;
     }
 
-    scale(value: number, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = this;
-
+    scale(value: number, dest: vec2): vec2 {
         dest.x *= value;
         dest.y *= value;
 
         return dest;
     }
 
-    normalize(dest: vec2 | null = null): vec2 {
-        if (!dest) dest = this;
-
+    normalize(dest: vec2): vec2 {
         var length = this.length();
 
         if (length === 1) {
@@ -174,21 +166,15 @@ class vec2 {
         return dest;
     }
 
-    multiplyMat2(matrix: mat2, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = this;
-
+    multiplyMat2(matrix: mat2, dest: vec2): vec2 {
         return matrix.multiplyVec2(this, dest);
     }
 
-    multiplyMat3(matrix: mat3, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = this;
-
+    multiplyMat3(matrix: mat3, dest: vec2): vec2 {
         return matrix.multiplyVec2(this, dest);
     }
 
-    static cross(vector: vec2, vector2: vec2, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    static cross(vector: vec2, vector2: vec2, dest: vec3): vec3 {
         var x = vector.x,
             y = vector.y;
 
@@ -219,9 +205,7 @@ class vec2 {
         return (x * x + y * y);
     }
 
-    static direction(vector: vec2, vector2: vec2, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = new vec2();
-
+    static direction(vector: vec2, vector2: vec2, dest: vec2): vec2 {
         var x = vector.x - vector2.x,
             y = vector.y - vector2.y;
 
@@ -242,9 +226,7 @@ class vec2 {
         return dest;
     }
 
-    static mix(vector: vec2, vector2: vec2, time: number, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = new vec2();
-
+    static mix(vector: vec2, vector2: vec2, time: number, dest: vec2): vec2 {
         var x = vector.x,
             y = vector.y;
 
@@ -257,36 +239,28 @@ class vec2 {
         return dest;
     }
 
-    static sum(vector: vec2, vector2: vec2, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = new vec2();
-
+    static sum(vector: vec2, vector2: vec2, dest: vec2): vec2 {
         dest.x = vector.x + vector2.x;
         dest.y = vector.y + vector2.y;
 
         return dest;
     }
 
-    static difference(vector: vec2, vector2: vec2, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = new vec2();
-
+    static difference(vector: vec2, vector2: vec2, dest: vec2): vec2 {
         dest.x = vector.x - vector2.x;
         dest.y = vector.y - vector2.y;
 
         return dest;
     }
 
-    static product(vector: vec2, vector2: vec2, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = new vec2();
-
+    static product(vector: vec2, vector2: vec2, dest: vec2): vec2 {
         dest.x = vector.x * vector2.x;
         dest.y = vector.y * vector2.y;
 
         return dest;
     }
 
-    static quotient(vector: vec2, vector2: vec2, dest: vec2 | null = null): vec2 {
-        if (!dest) dest = new vec2();
-
+    static quotient(vector: vec2, vector2: vec2, dest: vec2): vec2 {
         dest.x = vector.x / vector2.x;
         dest.y = vector.y / vector2.y;
 

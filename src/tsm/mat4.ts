@@ -61,7 +61,7 @@ class mat4 {
         }
     }
 
-    copy(dest: mat4 | null = null): mat4 {
+    copyTo(dest: mat4 | null = null): mat4 {
         if (!dest) dest = new mat4();
 
         for (var i = 0; i < 16; i++) {
@@ -491,10 +491,14 @@ class mat4 {
             return this.identity;
         }
 
-        var z = vec3.difference(position, target).normalize();
+        var x = new vec3();
+        var y = new vec3();
+        var z = new vec3();
 
-        var x = vec3.cross(up, z).normalize();
-        var y = vec3.cross(z, x).normalize();
+        vec3.difference(position, target, z).normalize(z);
+
+        vec3.cross(up, z, x).normalize(x);
+        vec3.cross(z, x, y).normalize(y);
 
         return new mat4([
             x.x,

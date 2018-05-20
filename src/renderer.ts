@@ -84,7 +84,7 @@ class WireRenderer {
         // N-gons
         // Draw models
         this.models.forEach(model => {
-            this.camera.viewProjectionMat.copy(this.mvpMat);
+            this.camera.viewProjectionMat.copyTo(this.mvpMat);
             this.mvpMat.multiply(model.mat);
 
             let face_addr = 0;

@@ -35,7 +35,7 @@
 
 class vec4 {
 
-    private values = new Float32Array(4);
+    public values = new Float32Array(4);
 
     get x(): number {
         return this.values[0];
@@ -202,9 +202,7 @@ class vec4 {
         this.w = 0;
     }
 
-    copy(dest: vec4 | null = null): vec4 {
-        if (!dest) dest = new vec4();
-
+    copyTo(dest: vec4): vec4 {
         dest.x = this.x;
         dest.y = this.y;
         dest.z = this.z;
@@ -213,9 +211,7 @@ class vec4 {
         return dest;
     }
 
-    negate(dest: vec4 | null = null): vec4 {
-        if (!dest) dest = this;
-
+    negate(dest: vec4): vec4 {
         dest.x = -this.x;
         dest.y = -this.y;
         dest.z = -this.z;
@@ -289,9 +285,7 @@ class vec4 {
         return this;
     }
 
-    scale(value: number, dest: vec4 | null = null): vec4 {
-        if (!dest) dest = this;
-
+    scale(value: number, dest: vec4): vec4 {
         dest.x *= value;
         dest.y *= value;
         dest.z *= value;
@@ -300,9 +294,7 @@ class vec4 {
         return dest;
     }
 
-    normalize(dest: vec4 | null = null): vec4 {
-        if (!dest) dest = this;
-
+    normalize(dest: vec4): vec4 {
         var length = this.length();
 
         if (length === 1) {
@@ -328,15 +320,11 @@ class vec4 {
         return dest;
     }
 
-    multiplyMat4(matrix: mat4, dest: vec4 | null = null): vec4 {
-        if (!dest) dest = this;
-
+    multiplyMat4(matrix: mat4, dest: vec4): vec4 {
         return matrix.multiplyVec4(this, dest);
     }
 
-    static mix(vector: vec4, vector2: vec4, time: number, dest: vec4 | null = null): vec4 {
-        if (!dest) dest = new vec4();
-
+    static mix(vector: vec4, vector2: vec4, time: number, dest: vec4): vec4 {
         dest.x = vector.x + time * (vector2.x - vector.x);
         dest.y = vector.y + time * (vector2.y - vector.y);
         dest.z = vector.z + time * (vector2.z - vector.z);
@@ -345,48 +333,40 @@ class vec4 {
         return dest;
     }
 
-    static sum(vector: vec4, vector2: vec4, dest: vec4 | null = null): vec4 {
-        if (!dest) dest = new vec4();
-
+    static sum(vector: vec4, vector2: vec4, dest: vec4): vec4 {
         dest.x = vector.x + vector2.x,
         dest.y = vector.y + vector2.y,
         dest.z = vector.z + vector2.z,
         dest.w = vector.w + vector2.w
 
-    return dest;
+        return dest;
     }
 
-    static difference(vector: vec4, vector2: vec4, dest: vec4 | null = null): vec4 {
-        if (!dest) dest = new vec4();
-
+    static difference(vector: vec4, vector2: vec4, dest: vec4): vec4 {
         dest.x = vector.x - vector2.x,
         dest.y = vector.y - vector2.y,
         dest.z = vector.z - vector2.z,
         dest.w = vector.w - vector2.w
 
-    return dest;
+        return dest;
     }
 
-    static product(vector: vec4, vector2: vec4, dest: vec4 | null = null): vec4 {
-        if (!dest) dest = new vec4();
-
+    static product(vector: vec4, vector2: vec4, dest: vec4): vec4 {
         dest.x = vector.x * vector2.x,
         dest.y = vector.y * vector2.y,
         dest.z = vector.z * vector2.z,
         dest.w = vector.w * vector2.w
 
-    return dest;
+        return dest;
     }
 
-    static quotient(vector: vec4, vector2: vec4, dest: vec4 | null = null): vec4 {
-        if (!dest) dest = new vec4();
-
+    static quotient(vector: vec4, vector2: vec4, dest: vec4): vec4 {
         dest.x = vector.x / vector2.x,
         dest.y = vector.y / vector2.y,
         dest.z = vector.z / vector2.z,
         dest.w = vector.w / vector2.w
 
-    return dest;
+        return dest;
     }
 
     static zero = new vec4([0, 0, 0, 1]);

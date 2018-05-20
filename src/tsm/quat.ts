@@ -35,7 +35,7 @@
 
 class quat {
 
-    private values = new Float32Array(4);
+    public values = new Float32Array(4);
 
     get x(): number {
         return this.values[0];
@@ -127,9 +127,7 @@ class quat {
         }
     }
 
-    copy(dest: quat | null = null): quat {
-        if (!dest) dest = new quat();
-
+    copyTo(dest: quat): quat {
         for (var i = 0; i < 4; i++) {
             dest.values[i] = this.values[i];
         }
@@ -227,9 +225,7 @@ class quat {
         return Math.sqrt(x * x + y * y + z * z + w * w);
     }
 
-    normalize(dest: quat | null = null): quat {
-        if (!dest) dest = this;
-
+    normalize(dest: quat): quat {
         var x = this.x,
             y = this.y,
             z = this.z,
@@ -283,9 +279,7 @@ class quat {
         return this;
     }
 
-    multiplyVec3(vector: vec3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    multiplyVec3(vector: vec3, dest: vec3): vec3 {
         var x = vector.x,
             y = vector.y,
             z = vector.z;
@@ -307,9 +301,7 @@ class quat {
         return dest;
     }
 
-    toMat3(dest: mat3 | null = null): mat3 {
-        if (!dest) dest = new mat3();
-
+    toMat3(dest: mat3): mat3 {
         var x = this.x,
             y = this.y,
             z = this.z,
@@ -346,9 +338,7 @@ class quat {
         return dest;
     }
 
-    toMat4(dest: mat4 | null = null): mat4 {
-        if (!dest) dest = new mat4();
-
+    toMat4(dest: mat4): mat4 {
         var x = this.x,
             y = this.y,
             z = this.z,
@@ -393,9 +383,7 @@ class quat {
         return dest;
     }
 
-    static sum(q1: quat, q2: quat, dest: quat | null = null): quat {
-        if (!dest) dest = new quat();
-
+    static sum(q1: quat, q2: quat, dest: quat): quat {
         dest.x = q1.x + q2.x;
         dest.y = q1.y + q2.y;
         dest.z = q1.z + q2.z;
@@ -404,9 +392,7 @@ class quat {
         return dest;
     }
 
-    static product(q1: quat, q2: quat, dest: quat | null = null): quat {
-        if (!dest) dest = new quat();
-
+    static product(q1: quat, q2: quat, dest: quat): quat {
         var q1x = q1.x,
             q1y = q1.y,
             q1z = q1.z,
@@ -425,9 +411,7 @@ class quat {
         return dest;
     }
 
-    static cross(q1: quat, q2: quat, dest: quat | null = null): quat {
-        if (!dest) dest = new quat();
-
+    static cross(q1: quat, q2: quat, dest: quat): quat {
         var q1x = q1.x,
             q1y = q1.y,
             q1z = q1.z,
@@ -446,9 +430,7 @@ class quat {
         return dest;
     }
 
-    static shortMix(q1: quat, q2: quat, time: number, dest: quat | null = null): quat {
-        if (!dest) dest = new quat();
-
+    static shortMix(q1: quat, q2: quat, time: number, dest: quat): quat {
         if (time <= 0.0) {
             dest.xyzw = q1.xyzw;
 
@@ -459,11 +441,11 @@ class quat {
             return dest;
         }
 
-        var cos = quat.dot(q1, q2),
-            q2a = q2.copy();
+        var cos = quat.dot(q1, q2);
+        q2.copyTo(dest);
 
         if (cos < 0.0) {
-            q2a.inverse();
+            dest.inverse();
             cos = -cos;
         }
 
@@ -484,17 +466,15 @@ class quat {
             k1 = Math.sin((0 + time) * angle) * oneOverSin;
         }
 
-        dest.x = k0 * q1.x + k1 * q2a.x;
-        dest.y = k0 * q1.y + k1 * q2a.y;
-        dest.z = k0 * q1.z + k1 * q2a.z;
-        dest.w = k0 * q1.w + k1 * q2a.w;
+        dest.x = k0 * q1.x + k1 * dest.x;
+        dest.y = k0 * q1.y + k1 * dest.y;
+        dest.z = k0 * q1.z + k1 * dest.z;
+        dest.w = k0 * q1.w + k1 * dest.w;
 
         return dest;
     }
 
-    static mix(q1: quat, q2: quat, time: number, dest: quat | null = null): quat {
-        if (!dest) dest = new quat();
-
+    static mix(q1: quat, q2: quat, time: number, dest: quat): quat {
         var cosHalfTheta = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
 
         if (Math.abs(cosHalfTheta) >= 1.0) {
@@ -526,9 +506,7 @@ class quat {
         return dest;
     }
 
-    static fromAxis(axis: vec3, angle: number, dest: quat | null = null): quat {
-        if (!dest) dest = new quat();
-
+    static fromAxis(axis: vec3, angle: number, dest: quat): quat {
         angle *= 0.5;
         var sin = Math.sin(angle);
 

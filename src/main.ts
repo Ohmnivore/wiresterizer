@@ -23,20 +23,25 @@ let renderer = new WireRenderer(canvas, frameRate, bgValue, wireValue);
 
 
 // Setup scene (-Z forward, Y up)
-renderer.camera.setPerspective(60, renderer.screenAspectRatio, 0.01, 10000.0);
+renderer.camera.setPerspective(45, renderer.screenAspectRatio, 0.01, 10000.0);
 
-renderer.camera.position.values[0] = 0.0;
-renderer.camera.position.values[1] = 0.0;
-renderer.camera.position.values[2] = 3.0;
+renderer.camera.position.x = 0.0;
+renderer.camera.position.y = 0.0;
+renderer.camera.position.z = 3.0;
 
-renderer.camera.target.values[0] = 0.0;
-renderer.camera.target.values[1] = 0.0;
-renderer.camera.target.values[2] = 0.0;
+renderer.camera.target.x = 0.0;
+renderer.camera.target.y = 0.0;
+renderer.camera.target.z = 0.0;
 
 renderer.camera.useDirection = false;
 
 let cube = new WireModel(array_cube)
 renderer.models.push(cube)
+
+cube.pos.x = 0;
+cube.pos.y = 0;
+cube.pos.z = 0;
+cube.updateMat();
 
 
 ///////////////////////////////////////////////////////////////////////////////

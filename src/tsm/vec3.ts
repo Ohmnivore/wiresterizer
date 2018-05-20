@@ -103,9 +103,7 @@ class vec3 {
         this.z = 0;
     }
 
-    copy(dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    copyTo(dest: vec3): vec3 {
         dest.x = this.x;
         dest.y = this.y;
         dest.z = this.z;
@@ -113,9 +111,7 @@ class vec3 {
         return dest;
     }
 
-    negate(dest: vec3 | null = null): vec3 {
-        if (!dest) dest = this;
-
+    negate(dest: vec3): vec3 {
         dest.x = -this.x;
         dest.y = -this.y;
         dest.z = -this.z;
@@ -180,9 +176,7 @@ class vec3 {
         return this;
     }
 
-    scale(value: number, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = this;
-
+    scale(value: number, dest: vec3): vec3 {
         dest.x *= value;
         dest.y *= value;
         dest.z *= value;
@@ -190,9 +184,7 @@ class vec3 {
         return dest;
     }
 
-    normalize(dest: vec3 | null = null): vec3 {
-        if (!dest) dest = this;
-
+    normalize(dest: vec3): vec3 {
         var length = this.length();
 
         if (length === 1) {
@@ -216,21 +208,15 @@ class vec3 {
         return dest;
     }
 
-    multiplyByMat3(matrix: mat3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = this;
-
+    multiplyByMat3(matrix: mat3, dest: vec3): vec3 {
         return matrix.multiplyVec3(this, dest);
     }
 
-    multiplyByQuat(quat: quat, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = this;
-
+    multiplyByQuat(quat: quat, dest: vec3): vec3 {
         return quat.multiplyVec3(this, dest);
     }
 
-    static cross(vector: vec3, vector2: vec3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    static cross(vector: vec3, vector2: vec3, dest: vec3): vec3 {
         var x = vector.x,
             y = vector.y,
             z = vector.z;
@@ -274,9 +260,7 @@ class vec3 {
         return (x * x + y * y + z * z);
     }
 
-    static direction(vector: vec3, vector2: vec3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    static direction(vector: vec3, vector2: vec3, dest: vec3): vec3 {
         var x = vector.x - vector2.x,
             y = vector.y - vector2.y,
             z = vector.z - vector2.z;
@@ -300,9 +284,7 @@ class vec3 {
         return dest;
     }
 
-    static mix(vector: vec3, vector2: vec3, time: number, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    static mix(vector: vec3, vector2: vec3, time: number, dest: vec3): vec3 {
         dest.x = vector.x + time * (vector2.x - vector.x);
         dest.y = vector.y + time * (vector2.y - vector.y);
         dest.z = vector.z + time * (vector2.z - vector.z);
@@ -310,9 +292,7 @@ class vec3 {
         return dest;
     }
 
-    static sum(vector: vec3, vector2: vec3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    static sum(vector: vec3, vector2: vec3, dest: vec3): vec3 {
         dest.x = vector.x + vector2.x;
         dest.y = vector.y + vector2.y;
         dest.z = vector.z + vector2.z;
@@ -320,9 +300,7 @@ class vec3 {
         return dest;
     }
 
-    static difference(vector: vec3, vector2: vec3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    static difference(vector: vec3, vector2: vec3, dest: vec3): vec3 {
         dest.x = vector.x - vector2.x;
         dest.y = vector.y - vector2.y;
         dest.z = vector.z - vector2.z;
@@ -330,9 +308,7 @@ class vec3 {
         return dest;
     }
 
-    static product(vector: vec3, vector2: vec3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    static product(vector: vec3, vector2: vec3, dest: vec3): vec3 {
         dest.x = vector.x * vector2.x;
         dest.y = vector.y * vector2.y;
         dest.z = vector.z * vector2.z;
@@ -340,9 +316,7 @@ class vec3 {
         return dest;
     }
 
-    static quotient(vector: vec3, vector2: vec3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    static quotient(vector: vec3, vector2: vec3, dest: vec3): vec3 {
         dest.x = vector.x / vector2.x;
         dest.y = vector.y / vector2.y;
         dest.z = vector.z / vector2.z;
@@ -350,25 +324,22 @@ class vec3 {
         return dest;
     }
 
-    toQuat(dest: quat | null = null): quat {
-        if (!dest) dest = new quat();
-
+    toQuat(dest: quat): quat {
         var c = new vec3();
-        var s = new vec3();
 
         c.x = Math.cos(this.x * 0.5);
-        s.x = Math.sin(this.x * 0.5);
+        dest.x = Math.sin(this.x * 0.5);
 
         c.y = Math.cos(this.y * 0.5);
-        s.y = Math.sin(this.y * 0.5);
+        dest.y = Math.sin(this.y * 0.5);
 
         c.z = Math.cos(this.z * 0.5);
-        s.z = Math.sin(this.z * 0.5);
+        dest.z = Math.sin(this.z * 0.5);
 
-        dest.x = s.x * c.y * c.z - c.x * s.y * s.z;
-        dest.y = c.x * s.y * c.z + s.x * c.y * s.z;
-        dest.z = c.x * c.y * s.z - s.x * s.y * c.z;
-        dest.w = c.x * c.y * c.z + s.x * s.y * s.z;
+        dest.x = dest.x * c.y * c.z - c.x * dest.y * dest.z;
+        dest.y = c.x * dest.y * c.z + dest.x * c.y * dest.z;
+        dest.z = c.x * c.y * dest.z - dest.x * dest.y * c.z;
+        dest.w = c.x * c.y * c.z + dest.x * dest.y * dest.z;
 
         return dest;
     }

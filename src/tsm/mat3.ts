@@ -35,7 +35,7 @@
 
 class mat3 {
 
-    private values = new Float32Array(9);
+    public values = new Float32Array(9);
 
     constructor(values: number[] | null = null) {
         if (values) {
@@ -61,7 +61,7 @@ class mat3 {
         }
     }
 
-    copy(dest: mat3 | null = null): mat3 {
+    copyTo(dest: mat3 | null = null): mat3 {
         if (!dest) dest = new mat3();
 
         for (var i = 0; i < 9; i++) {
