@@ -69,6 +69,14 @@ class mat3 {
         return dest;
     }
 
+    copyFrom(src: mat3): mat3 {
+        for (var i = 0; i < 9; i++) {
+            this.values[i] = src.values[i];
+        }
+
+        return this;
+    }
+
     all(): number[] {
         var data: number[] = [];
         for (var i = 0; i < 9; i++) {

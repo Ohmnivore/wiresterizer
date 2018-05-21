@@ -135,6 +135,14 @@ class quat {
         return dest;
     }
 
+    copyFrom(src: quat): quat {
+        for (var i = 0; i < 4; i++) {
+            this.values[i] = src.values[i];
+        }
+
+        return this;
+    }
+
     roll(): number {
         var x = this.x,
             y = this.y,

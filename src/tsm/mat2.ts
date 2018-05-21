@@ -69,6 +69,14 @@ class mat2 {
         return dest;
     }
 
+    copyFrom(src: mat2): mat2 {
+        for (var i = 0; i < 4; i++) {
+            this.values[i] = src.values[i];
+        }
+
+        return this;
+    }
+
     all(): number[] {
         var data: number[] = [];
         for (var i = 0; i < 4; i++) {

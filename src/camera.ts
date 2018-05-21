@@ -32,13 +32,13 @@ class WireCamera {
     public updateCamMats() {
         let target = this.target;
         if (this.useDirection) {
-            this.position.copyTo(target);
+            this.target.copyFrom(this.position);
             target.add(this.direction);
         }
 
         mat4.lookAt(this.position, target, this.viewMat, this.up);
 
-        this.projectionMat.copyTo(this.viewProjectionMat);
+        this.viewProjectionMat.copyFrom(this.projectionMat);
         this.viewProjectionMat.multiply(this.viewMat);
     }
 }

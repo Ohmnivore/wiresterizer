@@ -211,6 +211,15 @@ class vec4 {
         return dest;
     }
 
+    copyFrom(src: vec4): vec4 {
+        this.x = src.x;
+        this.y = src.y;
+        this.z = src.z;
+        this.w = src.w;
+
+        return this;
+    }
+
     negate(dest: vec4): vec4 {
         dest.x = -this.x;
         dest.y = -this.y;

@@ -69,6 +69,14 @@ class mat4 {
         return dest;
     }
 
+    copyFrom(src: mat4): mat4 {
+        for (var i = 0; i < 16; i++) {
+            this.values[i] = src.values[i];
+        }
+
+        return this;
+    }
+
     all(): number[] {
         var data: number[] = [];
         for (var i = 0; i < 16; i++) {
