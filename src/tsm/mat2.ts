@@ -61,9 +61,7 @@ class mat2 {
         }
     }
 
-    copyTo(dest: mat2 | null = null): mat2 {
-        if (!dest) dest = new mat2();
-
+    copyTo(dest: mat2): mat2 {
         for (var i = 0; i < 4; i++) {
             dest.values[i] = this.values[i];
         }
@@ -171,24 +169,16 @@ class mat2 {
         return this;
     }
 
-    multiplyVec2(vector: vec2, result: vec2 | null = null): vec2 {
+    multiplyVec2(vector: vec2, result: vec2): vec2 {
         var x = vector.x,
             y = vector.y;
 
-        if (result) {
-            result.xy = [
-                x * this.values[0] + y * this.values[1],
-                x * this.values[2] + y * this.values[3]
-            ];
+        result.xy = [
+            x * this.values[0] + y * this.values[1],
+            x * this.values[2] + y * this.values[3]
+        ];
 
-            return result;
-        }
-        else {
-            return new vec2([
-                x * this.values[0] + y * this.values[1],
-                x * this.values[2] + y * this.values[3]
-            ]);
-        }
+        return result;
     }
 
     scale(vector: vec2): mat2 {
@@ -208,30 +198,20 @@ class mat2 {
         return this;
     }
 
-    static product(m1: mat2, m2: mat2, result: mat2 | null = null): mat2 {
+    static product(m1: mat2, m2: mat2, result: mat2): mat2 {
         var a11 = m1.at(0),
             a12 = m1.at(1),
             a21 = m1.at(2),
             a22 = m1.at(3);
 
-        if (result) {
-            result.init([
-                a11 * m2.at(0) + a12 * m2.at(2),
-                a11 * m2.at(1) + a12 * m2.at(3),
-                a21 * m2.at(0) + a22 * m2.at(2),
-                a21 * m2.at(1) + a22 * m2.at(3)
-            ]);
+        result.init([
+            a11 * m2.at(0) + a12 * m2.at(2),
+            a11 * m2.at(1) + a12 * m2.at(3),
+            a21 * m2.at(0) + a22 * m2.at(2),
+            a21 * m2.at(1) + a22 * m2.at(3)
+        ]);
 
-            return result;
-        }
-        else {
-            return new mat2([
-                a11 * m2.at(0) + a12 * m2.at(2),
-                a11 * m2.at(1) + a12 * m2.at(3),
-                a21 * m2.at(0) + a22 * m2.at(2),
-                a21 * m2.at(1) + a22 * m2.at(3)
-            ]);
-        }
+        return result;
     }
 
     static identity = new mat2().setIdentity();

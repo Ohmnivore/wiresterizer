@@ -61,9 +61,7 @@ class mat3 {
         }
     }
 
-    copyTo(dest: mat3 | null = null): mat3 {
-        if (!dest) dest = new mat3();
-
+    copyTo(dest: mat3): mat3 {
         for (var i = 0; i < 9; i++) {
             dest.values[i] = this.values[i];
         }
@@ -199,101 +197,59 @@ class mat3 {
         return this;
     }
 
-    multiplyVec2(vector: vec2, result: vec2 | null = null): vec2 {
+    multiplyVec2(vector: vec2, result: vec2): vec2 {
         var x = vector.x,
             y = vector.y;
 
-        if (result) {
-            result.xy = [
-                x * this.values[0] + y * this.values[3] + this.values[6],
-                x * this.values[1] + y * this.values[4] + this.values[7]
-            ];
+        result.xy = [
+            x * this.values[0] + y * this.values[3] + this.values[6],
+            x * this.values[1] + y * this.values[4] + this.values[7]
+        ];
 
-            return result;
-        }
-        else {
-            return new vec2([
-                x * this.values[0] + y * this.values[3] + this.values[6],
-                x * this.values[1] + y * this.values[4] + this.values[7]
-            ]);
-        }
+        return result;
     }
 
-    multiplyVec3(vector: vec3, result: vec3 | null = null): vec3 {
+    multiplyVec3(vector: vec3, result: vec3): vec3 {
         var x = vector.x,
             y = vector.y,
             z = vector.z;
 
-        if (result) {
-            result.xyz = [
-                x * this.values[0] + y * this.values[3] + z * this.values[6],
-                x * this.values[1] + y * this.values[4] + z * this.values[7],
-                x * this.values[2] + y * this.values[5] + z * this.values[8]
-            ];
+        result.xyz = [
+            x * this.values[0] + y * this.values[3] + z * this.values[6],
+            x * this.values[1] + y * this.values[4] + z * this.values[7],
+            x * this.values[2] + y * this.values[5] + z * this.values[8]
+        ];
 
-            return result;
-        }
-        else {
-            return new vec3([
-                x * this.values[0] + y * this.values[3] + z * this.values[6],
-                x * this.values[1] + y * this.values[4] + z * this.values[7],
-                x * this.values[2] + y * this.values[5] + z * this.values[8]
-            ]);
-        }
+        return result;
     }
 
-    toMat4(result: mat4 | null = null): mat4 {
-        if (result) {
-            result.init([
-                this.values[0],
-                this.values[1],
-                this.values[2],
-                0,
+    toMat4(result: mat4): mat4 {
+        result.init([
+            this.values[0],
+            this.values[1],
+            this.values[2],
+            0,
 
-                this.values[3],
-                this.values[4],
-                this.values[5],
-                0,
+            this.values[3],
+            this.values[4],
+            this.values[5],
+            0,
 
-                this.values[6],
-                this.values[7],
-                this.values[8],
-                0,
+            this.values[6],
+            this.values[7],
+            this.values[8],
+            0,
 
-                0,
-                0,
-                0,
-                1
-            ]);
+            0,
+            0,
+            0,
+            1
+        ]);
 
-            return result;
-        }
-        else {
-            return new mat4([
-                this.values[0],
-                this.values[1],
-                this.values[2],
-                0,
-
-                this.values[3],
-                this.values[4],
-                this.values[5],
-                0,
-
-                this.values[6],
-                this.values[7],
-                this.values[8],
-                0,
-
-                0,
-                0,
-                0,
-                1
-            ]);
-        }
+        return result;
     }
 
-    toQuat(): quat {
+    toQuat(dest: quat): quat {
         var m00 = this.values[0], m01 = this.values[1], m02 = this.values[2],
             m10 = this.values[3], m11 = this.values[4], m12 = this.values[5],
             m20 = this.values[6], m21 = this.values[7], m22 = this.values[8];
@@ -325,47 +281,45 @@ class mat3 {
         var biggestVal = Math.sqrt(fourBiggestSquaredMinus1 + 1) * 0.5;
         var mult = 0.25 / biggestVal;
 
-        var result = new quat();
-
         switch (biggestIndex) {
             case 0:
 
-                result.w = biggestVal;
-                result.x = (m12 - m21) * mult;
-                result.y = (m20 - m02) * mult;
-                result.z = (m01 - m10) * mult;
+                dest.w = biggestVal;
+                dest.x = (m12 - m21) * mult;
+                dest.y = (m20 - m02) * mult;
+                dest.z = (m01 - m10) * mult;
 
                 break;
 
             case 1:
 
-                result.w = (m12 - m21) * mult;
-                result.x = biggestVal;
-                result.y = (m01 + m10) * mult;
-                result.z = (m20 + m02) * mult;
+                dest.w = (m12 - m21) * mult;
+                dest.x = biggestVal;
+                dest.y = (m01 + m10) * mult;
+                dest.z = (m20 + m02) * mult;
 
                 break;
 
             case 2:
 
-                result.w = (m20 - m02) * mult;
-                result.x = (m01 + m10) * mult;
-                result.y = biggestVal;
-                result.z = (m12 + m21) * mult;
+                dest.w = (m20 - m02) * mult;
+                dest.x = (m01 + m10) * mult;
+                dest.y = biggestVal;
+                dest.z = (m12 + m21) * mult;
 
                 break;
 
             case 3:
 
-                result.w = (m01 - m10) * mult;
-                result.x = (m20 + m02) * mult;
-                result.y = (m12 + m21) * mult;
-                result.z = biggestVal;
+                dest.w = (m01 - m10) * mult;
+                dest.x = (m20 + m02) * mult;
+                dest.y = (m12 + m21) * mult;
+                dest.z = biggestVal;
 
                 break;
         }
 
-        return result;
+        return dest;
     }
 
     rotate(angle: number, axis: vec3): mat3 | null {
@@ -413,7 +367,7 @@ class mat3 {
         return this;
     }
 
-    static product(m1: mat3, m2: mat3, result: mat3 | null = null): mat3 {
+    static product(m1: mat3, m2: mat3, result: mat3): mat3 {
         var a00 = m1.at(0), a01 = m1.at(1), a02 = m1.at(2),
             a10 = m1.at(3), a11 = m1.at(4), a12 = m1.at(5),
             a20 = m1.at(6), a21 = m1.at(7), a22 = m1.at(8);
@@ -422,38 +376,21 @@ class mat3 {
             b10 = m2.at(3), b11 = m2.at(4), b12 = m2.at(5),
             b20 = m2.at(6), b21 = m2.at(7), b22 = m2.at(8);
 
-        if (result) {
-            result.init([
-                b00 * a00 + b01 * a10 + b02 * a20,
-                b00 * a01 + b01 * a11 + b02 * a21,
-                b00 * a02 + b01 * a12 + b02 * a22,
+        result.init([
+            b00 * a00 + b01 * a10 + b02 * a20,
+            b00 * a01 + b01 * a11 + b02 * a21,
+            b00 * a02 + b01 * a12 + b02 * a22,
 
-                b10 * a00 + b11 * a10 + b12 * a20,
-                b10 * a01 + b11 * a11 + b12 * a21,
-                b10 * a02 + b11 * a12 + b12 * a22,
+            b10 * a00 + b11 * a10 + b12 * a20,
+            b10 * a01 + b11 * a11 + b12 * a21,
+            b10 * a02 + b11 * a12 + b12 * a22,
 
-                b20 * a00 + b21 * a10 + b22 * a20,
-                b20 * a01 + b21 * a11 + b22 * a21,
-                b20 * a02 + b21 * a12 + b22 * a22
-            ]);
+            b20 * a00 + b21 * a10 + b22 * a20,
+            b20 * a01 + b21 * a11 + b22 * a21,
+            b20 * a02 + b21 * a12 + b22 * a22
+        ]);
 
-            return result;
-        }
-        else {
-            return new mat3([
-                b00 * a00 + b01 * a10 + b02 * a20,
-                b00 * a01 + b01 * a11 + b02 * a21,
-                b00 * a02 + b01 * a12 + b02 * a22,
-
-                b10 * a00 + b11 * a10 + b12 * a20,
-                b10 * a01 + b11 * a11 + b12 * a21,
-                b10 * a02 + b11 * a12 + b12 * a22,
-
-                b20 * a00 + b21 * a10 + b22 * a20,
-                b20 * a01 + b21 * a11 + b22 * a21,
-                b20 * a02 + b21 * a12 + b22 * a22
-            ]);
-        }
+        return result;
     }
 
     static identity = new mat3().setIdentity();

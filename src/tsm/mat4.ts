@@ -61,9 +61,7 @@ class mat4 {
         }
     }
 
-    copyTo(dest: mat4 | null = null): mat4 {
-        if (!dest) dest = new mat4();
-
+    copyTo(dest: mat4): mat4 {
         for (var i = 0; i < 16; i++) {
             dest.values[i] = this.values[i];
         }
@@ -266,9 +264,7 @@ class mat4 {
         return this;
     }
 
-    multiplyVec3(vector: vec3, dest: vec3 | null = null): vec3 {
-        if (!dest) dest = new vec3();
-
+    multiplyVec3(vector: vec3, dest: vec3): vec3 {
         var x = vector.x,
             y = vector.y,
             z = vector.z;
@@ -280,9 +276,7 @@ class mat4 {
         return dest;
     }
 
-    multiplyVec4(vector: vec4, dest: vec4 | null = null): vec4 {
-        if (!dest) dest = new vec4();
-
+    multiplyVec4(vector: vec4, dest: vec4): vec4 {
         var x = vector.x,
             y = vector.y,
             z = vector.z,
@@ -296,8 +290,8 @@ class mat4 {
         return dest;
     }
 
-    toMat3(): mat3 {
-        return new mat3([
+    toMat3(dest: mat3): mat3 {
+        dest.init([
             this.values[0],
             this.values[1],
             this.values[2],
@@ -308,9 +302,11 @@ class mat4 {
             this.values[9],
             this.values[10]
         ]);
+
+        return dest;
     }
 
-    toInverseMat3(): mat3 | null {
+    toInverseMat3(dest: mat3): mat3 | null {
         var a00 = this.values[0], a01 = this.values[1], a02 = this.values[2],
             a10 = this.values[4], a11 = this.values[5], a12 = this.values[6],
             a20 = this.values[8], a21 = this.values[9], a22 = this.values[10];
@@ -326,7 +322,7 @@ class mat4 {
 
         det = 1.0 / det;
 
-        return new mat3([
+        dest.init([
             det01 * det,
             (-a22 * a01 + a02 * a21) * det,
             (a12 * a01 - a02 * a11) * det,
@@ -337,6 +333,8 @@ class mat4 {
             (-a21 * a00 + a01 * a20) * det,
             (a11 * a00 - a01 * a10) * det
         ]);
+
+        return dest;
     }
 
     translate(vector: vec3): mat4 {
@@ -423,12 +421,12 @@ class mat4 {
         return this;
     }
 
-    static frustum(left: number, right: number, bottom: number, top: number, near: number, far: number): mat4 {
+    static frustum(left: number, right: number, bottom: number, top: number, near: number, far: number, dest: mat4): mat4 {
         var rl = (right - left),
             tb = (top - bottom),
             fn = (far - near);
 
-        return new mat4([
+        dest.init([
             (near * 2) / rl,
             0,
             0,
@@ -449,21 +447,25 @@ class mat4 {
             -(far * near * 2) / fn,
             0
         ]);
+
+        return dest;
     }
 
-    static perspective(fov: number, aspect: number, near: number, far: number): mat4 {
+    static perspective(fov: number, aspect: number, near: number, far: number, dest: mat4): mat4 {
         var top = near * Math.tan(fov * Math.PI / 360.0),
             right = top * aspect;
 
-        return mat4.frustum(-right, right, -top, top, near, far);
+        mat4.frustum(-right, right, -top, top, near, far, dest);
+
+        return dest;
     }
 
-    static orthographic(left: number, right: number, bottom: number, top: number, near: number, far: number): mat4 {
+    static orthographic(left: number, right: number, bottom: number, top: number, near: number, far: number, dest: mat4): mat4 {
         var rl = (right - left),
             tb = (top - bottom),
             fn = (far - near);
 
-        return new mat4([
+        dest.init([
             2 / rl,
             0,
             0,
@@ -484,9 +486,11 @@ class mat4 {
             -(far + near) / fn,
             1
         ]);
+
+        return dest;
     }
 
-    static lookAt(position: vec3, target: vec3, up: vec3 = vec3.up): mat4 {
+    static lookAt(position: vec3, target: vec3, dest: mat4, up: vec3 = vec3.up): mat4 {
         if (position.equals(target)) {
             return this.identity;
         }
@@ -500,7 +504,7 @@ class mat4 {
         vec3.cross(up, z, x).normalize(x);
         vec3.cross(z, x, y).normalize(y);
 
-        return new mat4([
+        dest.init([
             x.x,
             y.x,
             z.x,
@@ -521,9 +525,11 @@ class mat4 {
             -vec3.dot(z, position),
             1
         ]);
+
+        return dest;
     }
 
-    static product(m1: mat4, m2: mat4, result: mat4 | null = null): mat4 {
+    static product(m1: mat4, m2: mat4, result: mat4): mat4 {
         var a00 = m1.at(0), a01 = m1.at(1), a02 = m1.at(2), a03 = m1.at(3),
             a10 = m1.at(4), a11 = m1.at(5), a12 = m1.at(6), a13 = m1.at(7),
             a20 = m1.at(8), a21 = m1.at(9), a22 = m1.at(10), a23 = m1.at(11),
@@ -534,54 +540,29 @@ class mat4 {
             b20 = m2.at(8), b21 = m2.at(9), b22 = m2.at(10), b23 = m2.at(11),
             b30 = m2.at(12), b31 = m2.at(13), b32 = m2.at(14), b33 = m2.at(15);
 
-        if (result) {
-            result.init([
-                b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30,
-                b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31,
-                b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32,
-                b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33,
+        result.init([
+            b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30,
+            b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31,
+            b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32,
+            b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33,
 
-                b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30,
-                b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31,
-                b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32,
-                b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33,
+            b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30,
+            b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31,
+            b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32,
+            b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33,
 
-                b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30,
-                b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31,
-                b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32,
-                b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33,
+            b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30,
+            b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31,
+            b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32,
+            b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33,
 
-                b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30,
-                b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31,
-                b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32,
-                b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33
-            ]);
+            b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30,
+            b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31,
+            b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32,
+            b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33
+        ]);
 
-            return result;
-        }
-        else {
-            return new mat4([
-                b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30,
-                b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31,
-                b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32,
-                b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33,
-
-                b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30,
-                b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31,
-                b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32,
-                b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33,
-
-                b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30,
-                b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31,
-                b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32,
-                b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33,
-
-                b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30,
-                b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31,
-                b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32,
-                b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33
-            ]);
-        }
+        return result;
     }
 
     static identity = new mat4().setIdentity();
