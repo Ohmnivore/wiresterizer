@@ -10,6 +10,11 @@ class WireCamera {
     target: vec3;
     useDirection: boolean;
 
+    fov: number;
+    aspect: number;
+    near: number;
+    far: number;
+
     constructor() {
         this.projectionMat = new mat4();
         this.projectionMat.setIdentity();
@@ -23,10 +28,20 @@ class WireCamera {
         this.direction = new vec3();
         this.target = new vec3();
         this.useDirection = true;
+
+        this.fov = 0.0;
+        this.aspect = 0.0;
+        this.near = 0.0;
+        this.far = 0.0;
     }
 
     setPerspective(fov: number, aspect: number, near: number, far: number) {
         mat4.perspective(fov, aspect, near, far, this.projectionMat);
+
+        this.fov = fov;
+        this.aspect = aspect;
+        this.near = near;
+        this.far = far;
     }
 
     updateCamMats() {

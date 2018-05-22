@@ -9,6 +9,8 @@ class WireRenderer {
     protected canvas: HTMLCanvasElement;
     protected context: CanvasRenderingContext2D;
     protected screenBuffer: ImageData;
+    protected oldWidth: number;
+    protected oldHeight: number;
 
     // Global rendering variables
     screenWidth: number;
@@ -35,6 +37,8 @@ class WireRenderer {
         this.screenAspectRatio = this.screenWidth / this.screenHeight;
         this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
         this.screenBuffer = this.context.createImageData(canvas.width, canvas.height);
+        this.oldHeight = -1;
+        this.oldWidth = -1;
 
         this.bgValue = bgValue;
         this.wireValue = wireValue;
@@ -75,10 +79,29 @@ class WireRenderer {
     }
 
     update(elapsed: number) {
+        // Update canvas size
+        let targetWidth = Math.min(640, window.innerWidth);
+        let targetHeight = Math.min(480, window.innerHeight);
+
+        if (targetWidth / targetHeight < 1.333) {
+            targetHeight = targetWidth / 1.333;
+        }
+
+        this.canvas.width = this.screenWidth = targetWidth;
+        this.canvas.height = this.screenHeight = targetHeight;
+
+        if (this.screenWidth != this.oldWidth || this.screenHeight != this.oldHeight) {
+            this.screenBuffer = this.context.createImageData(this.screenWidth, this.screenHeight);
+        }
+        this.oldWidth = this.screenWidth;
+        this.oldHeight = this.screenHeight;
+
         // Clear screen
         this.screenBuffer.data.fill(this.bgValue);
 
         // Update camera
+        this.screenAspectRatio = this.screenWidth / this.screenHeight;
+        this.camera.setPerspective(this.camera.fov, this.screenAspectRatio, this.camera.near, this.camera.far);
         this.camera.updateCamMats();
 
         // N-gons
