@@ -1,10 +1,10 @@
 class WireModel {
 
-    public verts: Float32Array;
-    public num_faces: number;
+    verts: Float32Array;
+    num_faces: number;
 
-    public pos: vec3;
-    public mat: mat4;
+    pos: vec3;
+    mat: mat4;
 
     constructor(verts: Float32Array) {
         this.verts = verts;
@@ -26,7 +26,7 @@ class WireModel {
         this.updateMat();
     }
 
-    public updateMat() {
+    updateMat() {
         this.mat.values[12] = this.pos.x;
         this.mat.values[13] = this.pos.y;
         this.mat.values[14] = this.pos.z;

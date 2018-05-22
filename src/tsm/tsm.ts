@@ -40,5 +40,7 @@
 
 ///<reference path='./quat.ts' />
 
+///<reference path='./rand.ts' />
+
 
 

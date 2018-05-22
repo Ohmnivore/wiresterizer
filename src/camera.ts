@@ -1,16 +1,16 @@
 class WireCamera {
 
-    public projectionMat: mat4;
-    public viewMat: mat4;
-    public viewProjectionMat: mat4;
+    projectionMat: mat4;
+    viewMat: mat4;
+    viewProjectionMat: mat4;
 
-    public position: vec3;
-    public up: vec3;
-    public direction: vec3;
-    public target: vec3;
-    public useDirection: boolean;
+    position: vec3;
+    up: vec3;
+    direction: vec3;
+    target: vec3;
+    useDirection: boolean;
 
-    public constructor() {
+    constructor() {
         this.projectionMat = new mat4();
         this.projectionMat.setIdentity();
         this.viewMat = new mat4();
@@ -25,11 +25,11 @@ class WireCamera {
         this.useDirection = true;
     }
 
-    public setPerspective(fov: number, aspect: number, near: number, far: number) {
+    setPerspective(fov: number, aspect: number, near: number, far: number) {
         mat4.perspective(fov, aspect, near, far, this.projectionMat);
     }
 
-    public updateCamMats() {
+    updateCamMats() {
         let target = this.target;
         if (this.useDirection) {
             this.target.copyFrom(this.position);

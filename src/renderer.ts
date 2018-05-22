@@ -11,22 +11,22 @@ class WireRenderer {
     protected screenBuffer: ImageData;
 
     // Global rendering variables
-    public screenWidth: number;
-    public screenHeight: number;
-    public screenAspectRatio: number;
-    public bgValue: number;
-    public wireValue: number;
+    screenWidth: number;
+    screenHeight: number;
+    screenAspectRatio: number;
+    bgValue: number;
+    wireValue: number;
 
     // Scene
-    public camera: WireCamera;
-    public models: WireModel[];
+    camera: WireCamera;
+    models: WireModel[];
 
     // Per-frame variables to avoid allocations
-    private mvpMat: mat4;
-    private vert1: vec3;
-    private vert2: vec3;
-    private vert3: vec3;
-    private vert4: vec3;
+    protected mvpMat: mat4;
+    protected vert1: vec3;
+    protected vert2: vec3;
+    protected vert3: vec3;
+    protected vert4: vec3;
 
     constructor(canvas: HTMLCanvasElement, updateRate: number, bgValue: number, wireValue: number) {
         this.canvas = canvas;
@@ -61,20 +61,20 @@ class WireRenderer {
 
         clearInterval(this.updateInterval);
         this.updateInterval = setInterval(
-                (function(self) { return function() { self.update(); }; })(this),
+                (function(self) { return function() {
+                    // Compute delta time since last update
+                    let nowTS = +new Date();
+                    let lastTS = self.lastTS || nowTS;
+                    let dtSec = (nowTS - lastTS) / 1000.0;
+                    self.lastTS = nowTS;
+
+                    self.update(dtSec);
+                }; })(this),
                 1000 / this.updateRate
             );
     }
 
-    update() {
-        // Compute delta time since last update
-        let nowTS = +new Date();
-        let lastTS = this.lastTS || nowTS;
-        let dtSec = (nowTS - lastTS) / 1000.0;
-        this.lastTS = nowTS;
-
-        //console.log(dtSec);
-
+    update(elapsed: number) {
         // Clear screen
         this.screenBuffer.data.fill(this.bgValue);
 
