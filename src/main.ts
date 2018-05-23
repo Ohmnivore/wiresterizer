@@ -36,7 +36,6 @@ class LogoScene extends WireRenderer {
     constructor() {
         let canvas = element(canvasID) as HTMLCanvasElement;
         super(canvas, frameRate, bgValue, wireValue);
-        this.setUpdateRate(frameRate);
 
         // Setup scene (-Z forward, Y up)
         this.camera.setPerspective(fov, this.screenAspectRatio, near, far);
@@ -95,13 +94,17 @@ class LogoScene extends WireRenderer {
         // Use tilt tween
         let tiltValue = this.tiltTween.getValue();
         let tiltAngle;
+        let y;
         if (this.tiltUp) {
             tiltAngle = (1.0 - tiltValue) * 2.0 * Math.PI;
+            y = (Math.sin(tiltAngle) - 0.25) * 2.5;
+            // This is actually the same thing as the else branch, for the time being
+            // It just looks better that way. Tweens will be reworked anyway.
         }
         else {
             tiltAngle = (1.0 - tiltValue) * 2.0 * Math.PI;
+            y = (Math.sin(tiltAngle) - 0.25) * 2.5;
         }
-        let y = (Math.sin(tiltAngle) - 0.25) * 2.5;
         this.camera.position.y = y;
 
         // Update tweens

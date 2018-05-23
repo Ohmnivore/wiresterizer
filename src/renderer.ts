@@ -63,19 +63,36 @@ class WireRenderer {
     setUpdateRate(hz: number) {
         this.updateRate = hz;
 
-        clearInterval(this.updateInterval);
-        this.updateInterval = setInterval(
-                (function(self) { return function() {
-                    // Compute delta time since last update
-                    let nowTS = +new Date();
-                    let lastTS = self.lastTS || nowTS;
-                    let dtSec = (nowTS - lastTS) / 1000.0;
-                    self.lastTS = nowTS;
+        let bypassTypeSystem: any = window;
+        // Taken from http://www.javascriptkit.com/javatutors/requestanimationframe.shtml
+        window.requestAnimationFrame = bypassTypeSystem.requestAnimationFrame
+            || bypassTypeSystem.mozRequestAnimationFrame
+            || bypassTypeSystem.webkitRequestAnimationFrame
+            || bypassTypeSystem.msRequestAnimationFrame;
 
-                    self.update(dtSec);
-                }; })(this),
-                1000 / this.updateRate
+        if (window.requestAnimationFrame) {
+            window.requestAnimationFrame((timestamp: number) => this.stepFrame(timestamp));
+        }
+        else {
+            clearInterval(this.updateInterval);
+            this.updateInterval = setInterval(
+                () => this.stepFrame(+new Date()),
+                1000.0 / this.updateRate
             );
+        }
+    }
+
+    protected stepFrame(timestamp: number) {
+        // Compute delta time since last update
+        let lastTS = this.lastTS || timestamp;
+        let dtSec = (timestamp - lastTS) / 1000.0;
+        this.lastTS = timestamp;
+
+        this.update(dtSec);
+
+        if (window.requestAnimationFrame) {
+            window.requestAnimationFrame((timestamp: number) => this.stepFrame(timestamp));
+        }
     }
 
     update(elapsed: number) {
