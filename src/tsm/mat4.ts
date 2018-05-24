@@ -498,39 +498,39 @@ class mat4 {
         return dest;
     }
 
+    protected static tempX: vec3 = new vec3();
+    protected static tempY: vec3 = new vec3();
+    protected static tempZ: vec3 = new vec3();
+
     static lookAt(position: vec3, target: vec3, dest: mat4, up: vec3 = vec3.up): mat4 {
         if (position.equals(target)) {
             return this.identity;
         }
 
-        var x = new vec3();
-        var y = new vec3();
-        var z = new vec3();
+        vec3.difference(position, target, this.tempZ).normalize(this.tempZ);
 
-        vec3.difference(position, target, z).normalize(z);
-
-        vec3.cross(up, z, x).normalize(x);
-        vec3.cross(z, x, y).normalize(y);
+        vec3.cross(up, this.tempZ, this.tempX).normalize(this.tempX);
+        vec3.cross(this.tempZ, this.tempX, this.tempY).normalize(this.tempY);
 
         dest.init([
-            x.x,
-            y.x,
-            z.x,
+            this.tempX.x,
+            this.tempY.x,
+            this.tempZ.x,
             0,
 
-            x.y,
-            y.y,
-            z.y,
+            this.tempX.y,
+            this.tempY.y,
+            this.tempZ.y,
             0,
 
-            x.z,
-            y.z,
-            z.z,
+            this.tempX.z,
+            this.tempY.z,
+            this.tempZ.z,
             0,
 
-            -vec3.dot(x, position),
-            -vec3.dot(y, position),
-            -vec3.dot(z, position),
+            -vec3.dot(this.tempX, position),
+            -vec3.dot(this.tempY, position),
+            -vec3.dot(this.tempZ, position),
             1
         ]);
 

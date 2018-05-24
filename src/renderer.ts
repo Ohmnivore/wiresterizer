@@ -1,5 +1,8 @@
 class WireRenderer {
 
+    // To avoid fat arrow for callbacks ('this' woes)
+    protected static instance: WireRenderer;
+
     // Update timer
     updateRate: number;
     protected updateInterval: number;
@@ -54,6 +57,8 @@ class WireRenderer {
         this.vert2 = new vec3();
 
         this.setUpdateRate(this.updateRate);
+
+        WireRenderer.instance = this;
     }
 
     setUpdateRate(hz: number) {
@@ -67,15 +72,20 @@ class WireRenderer {
             || bypassTypeSystem.msRequestAnimationFrame;
 
         if (window.requestAnimationFrame) {
-            window.requestAnimationFrame((timestamp: number) => this.stepFrame(timestamp));
+            window.requestAnimationFrame(WireRenderer.stepFrameCallbackAnimationFrame);
         }
         else {
             clearInterval(this.updateInterval);
-            this.updateInterval = setInterval(
-                () => this.stepFrame(+new Date()),
-                1000.0 / this.updateRate
-            );
+            this.updateInterval = setInterval(WireRenderer.stepFrameCallbackSetInterval, 1000.0 / this.updateRate);
         }
+    }
+
+    protected static stepFrameCallbackAnimationFrame(timestamp: number) {
+        WireRenderer.instance.stepFrame(timestamp);
+    }
+
+    protected static stepFrameCallbackSetInterval() {
+        WireRenderer.instance.stepFrame(+new Date());
     }
 
     protected stepFrame(timestamp: number) {
@@ -119,7 +129,9 @@ class WireRenderer {
 
         // N-gons
         // Draw models
-        this.models.forEach(model => {
+        for (let modelIdx = 0; modelIdx < this.models.length; ++modelIdx) {
+            let model = this.models[modelIdx]
+
             this.mvpMat.copyFrom(this.camera.viewProjectionMat);
             this.mvpMat.multiply(model.mat);
 
@@ -151,7 +163,7 @@ class WireRenderer {
 
                 face_addr += num_verts * 3;
             }
-        });
+        }
 
         // Swap buffers
         this.context.putImageData(this.screenBuffer, 0, 0);
@@ -167,9 +179,11 @@ class WireRenderer {
         y = Math.floor(y);
         let base = (y * this.screenWidth + x) * 4;
 
-        if (base < 0 || (base + 3) >= (this.screenWidth * this.screenHeight * 4)) {
-            return;
-        }
+        // We have no view frustum clipping, this is necessary if the scene
+        // allows objects to overflow the screen
+        // if (base < 0 || (base + 3) >= (this.screenWidth * this.screenHeight * 4)) {
+        //     return;
+        // }
 
         this.screenBuffer.data[base] = this.wireValue;
         this.screenBuffer.data[base + 1] = this.wireValue;

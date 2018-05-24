@@ -108,9 +108,9 @@ class LogoScene extends WireRenderer {
         this.camera.position.y = y;
 
         // Update tweens
-        this.tweens.forEach(tween => {
-            tween.update(elapsed);
-        });
+        for (let idx = 0; idx < this.tweens.length; ++idx) {
+            this.tweens[idx].update(elapsed);
+        }
 
         super.update(elapsed);
     }
