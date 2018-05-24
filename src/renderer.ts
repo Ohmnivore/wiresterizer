@@ -27,8 +27,6 @@ class WireRenderer {
     protected mvpMat: mat4;
     protected vert1: vec3;
     protected vert2: vec3;
-    protected vert3: vec3;
-    protected vert4: vec3;
 
     constructor(canvas: HTMLCanvasElement, updateRate: number, bgValue: number, wireValue: number) {
         this.canvas = canvas;
@@ -54,8 +52,6 @@ class WireRenderer {
         this.mvpMat = new mat4();
         this.vert1 = new vec3();
         this.vert2 = new vec3();
-        this.vert3 = new vec3();
-        this.vert4 = new vec3();
 
         this.setUpdateRate(this.updateRate);
     }
@@ -147,10 +143,10 @@ class WireRenderer {
                     this.mvpMat.multiplyVec3(this.vert1, this.vert1);
                     this.mvpMat.multiplyVec3(this.vert2, this.vert2);
 
-                    let v1_c = this.toCanvas(this.vert1);
-                    let v2_c = this.toCanvas(this.vert2);
+                    this.toCanvas(this.vert1);
+                    this.toCanvas(this.vert2);
 
-                    this.drawLine(v1_c.x, v1_c.y, v2_c.x, v2_c.y);
+                    this.drawLine(this.vert1.x, this.vert1.y, this.vert2.x, this.vert2.y);
                 }
 
                 face_addr += num_verts * 3;
@@ -161,13 +157,9 @@ class WireRenderer {
         this.context.putImageData(this.screenBuffer, 0, 0);
     }
 
-    toCanvas(pos: vec3): vec2 {
-        let ret = new vec2();
-
-        ret.x = ((pos.x / pos.z * this.screenWidth / 1.0) + this.screenWidth) / 2.0;
-        ret.y = this.screenHeight - ((pos.y / pos.z * this.screenHeight / 1.0) + this.screenHeight) / 2.0;
-
-        return ret;
+    toCanvas(pos: vec3) {
+        pos.x = ((pos.x / pos.z * this.screenWidth / 1.0) + this.screenWidth) / 2.0;
+        pos.y = this.screenHeight - ((pos.y / pos.z * this.screenHeight / 1.0) + this.screenHeight) / 2.0;
     }
 
     setPixel(x: number, y: number) {
