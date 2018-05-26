@@ -39,7 +39,7 @@ class WireRenderer {
         this.screenWidth = canvas.width;
         this.screenHeight = canvas.height;
         this.screenAspectRatio = this.screenWidth / this.screenHeight;
-        this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
+        this.context = canvas.getContext("2d", { alpha: false }) as CanvasRenderingContext2D;
         this.screenBuffer = this.context.createImageData(canvas.width, canvas.height);
         this.screenBufferArray = new ArrayBuffer(this.screenBuffer.data.length);
         this.screenBufferArrayU8 = new Uint8ClampedArray(this.screenBufferArray);
