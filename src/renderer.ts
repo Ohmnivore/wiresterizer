@@ -12,6 +12,9 @@ class WireRenderer {
     protected canvas: HTMLCanvasElement;
     protected context: CanvasRenderingContext2D;
     protected screenBuffer: ImageData;
+    protected screenBufferArray: ArrayBuffer;
+    protected screenBufferArrayU8: Uint8ClampedArray;
+    protected screenBufferArrayU32: Uint32Array;
     protected oldWidth: number;
     protected oldHeight: number;
 
@@ -38,6 +41,9 @@ class WireRenderer {
         this.screenAspectRatio = this.screenWidth / this.screenHeight;
         this.context = canvas.getContext("2d") as CanvasRenderingContext2D;
         this.screenBuffer = this.context.createImageData(canvas.width, canvas.height);
+        this.screenBufferArray = new ArrayBuffer(this.screenBuffer.data.length);
+        this.screenBufferArrayU8 = new Uint8ClampedArray(this.screenBufferArray);
+        this.screenBufferArrayU32 = new Uint32Array(this.screenBufferArray);
         this.oldHeight = -1;
         this.oldWidth = -1;
 
@@ -115,12 +121,15 @@ class WireRenderer {
 
         if (this.screenWidth != this.oldWidth || this.screenHeight != this.oldHeight) {
             this.screenBuffer = this.context.createImageData(this.screenWidth, this.screenHeight);
+            this.screenBufferArray = new ArrayBuffer(this.screenBuffer.data.length);
+            this.screenBufferArrayU8 = new Uint8ClampedArray(this.screenBufferArray);
+            this.screenBufferArrayU32 = new Uint32Array(this.screenBufferArray);
         }
         this.oldWidth = this.screenWidth;
         this.oldHeight = this.screenHeight;
 
         // Clear screen
-        this.screenBuffer.data.fill(this.bgValue);
+        this.screenBufferArrayU32.fill(this.bgValue);
 
         // Update camera
         this.screenAspectRatio = this.screenWidth / this.screenHeight;
@@ -166,6 +175,7 @@ class WireRenderer {
         }
 
         // Swap buffers
+        this.screenBuffer.data.set(this.screenBufferArrayU8);
         this.context.putImageData(this.screenBuffer, 0, 0);
     }
 
@@ -177,7 +187,6 @@ class WireRenderer {
     setPixel(x: number, y: number) {
         x = Math.floor(x);
         y = Math.floor(y);
-        let base = (y * this.screenWidth + x) * 4;
 
         // We have no view frustum clipping, this is necessary if the scene
         // allows objects to overflow the screen
@@ -185,10 +194,7 @@ class WireRenderer {
         //     return;
         // }
 
-        this.screenBuffer.data[base] = this.wireValue;
-        this.screenBuffer.data[base + 1] = this.wireValue;
-        this.screenBuffer.data[base + 2] = this.wireValue;
-        this.screenBuffer.data[base + 3] = 0xFF; // Alpha
+        this.screenBufferArrayU32[y * this.screenWidth + x] = this.wireValue;
     }
 
     // Taken from http://tech-algorithm.com/articles/drawing-line-using-bresenham-algorithm

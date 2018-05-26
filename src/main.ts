@@ -17,8 +17,8 @@
 // Init variables
 let canvasID = "wiresterizer";
 let frameRate = 60.0;
-let bgValue = 0x00;     // black
-let wireValue = 0xFF;   // white
+let bgValue = 0x00000000;     // transparent
+let wireValue = 0xFFFFFFFF;   // solid white + endianness doesn't matter (we're using typed arrays for the screen buffer)
 let fov = 45.0;
 let near = 0.01;
 let far = 10000.0;
