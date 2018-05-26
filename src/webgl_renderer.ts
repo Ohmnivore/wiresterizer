@@ -112,7 +112,11 @@ class WireWebGLRenderer {
     }
 
     isSupportedOnBrowser(): boolean {
-        return false;
+        return !(this.context == null ||
+                 this.screenProgram == null ||
+                 this.screenBufferTextureUniformLocation == null ||
+                 this.screenSquareBuffer == null ||
+                 this.screenBufferTexture == null);
     }
 
     launch() {
