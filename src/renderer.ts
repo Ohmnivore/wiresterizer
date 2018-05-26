@@ -149,25 +149,23 @@ class WireRenderer {
                 let num_verts = model.verts[face_addr];
                 face_addr++;
 
-                for (let vert_idx = 0; vert_idx < num_verts; ++vert_idx) {
-                    let vert_1_addr = face_addr + vert_idx * 3;
-                    let vert_2_addr = face_addr + ((vert_idx + 1) % num_verts) * 3;
+                this.vert1.x = model.verts[face_addr];
+                this.vert1.y = model.verts[face_addr + 1];
+                this.vert1.z = model.verts[face_addr + 2];
+                this.mvpMat.multiplyVec3(this.vert1, this.vert1);
+                this.toCanvas(this.vert1);
 
-                    this.vert1.x = model.verts[vert_1_addr];
-                    this.vert1.y = model.verts[vert_1_addr + 1];
-                    this.vert1.z = model.verts[vert_1_addr + 2];
+                for (let vert_idx = 1; vert_idx <= num_verts; ++vert_idx) {
+                    let vert_2_addr = face_addr + (vert_idx % num_verts) * 3;
 
                     this.vert2.x = model.verts[vert_2_addr];
                     this.vert2.y = model.verts[vert_2_addr + 1];
                     this.vert2.z = model.verts[vert_2_addr + 2];
-
-                    this.mvpMat.multiplyVec3(this.vert1, this.vert1);
                     this.mvpMat.multiplyVec3(this.vert2, this.vert2);
-
-                    this.toCanvas(this.vert1);
                     this.toCanvas(this.vert2);
 
                     this.drawLine(this.vert1.x, this.vert1.y, this.vert2.x, this.vert2.y);
+                    this.vert1.copyFrom(this.vert2);
                 }
 
                 face_addr += num_verts * 3;
