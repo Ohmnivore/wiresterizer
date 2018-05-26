@@ -7,6 +7,7 @@ class WireRenderer {
     updateRate: number;
     protected updateInterval: number;
     protected lastTS: number;
+    preUpdate: ((elapsed: number) => void) | null;
 
     // Screen buffer
     protected canvas: HTMLCanvasElement;
@@ -62,14 +63,10 @@ class WireRenderer {
         this.vert1 = new vec3();
         this.vert2 = new vec3();
 
-        this.setUpdateRate(this.updateRate);
-
         WireRenderer.instance = this;
     }
 
-    setUpdateRate(hz: number) {
-        this.updateRate = hz;
-
+    launch() {
         let bypassTypeSystem: any = window;
         // Taken from http://www.javascriptkit.com/javatutors/requestanimationframe.shtml
         window.requestAnimationFrame = bypassTypeSystem.requestAnimationFrame
@@ -130,6 +127,11 @@ class WireRenderer {
 
         // Clear screen
         this.screenBufferArrayU32.fill(this.bgValue);
+
+        // Call pre-update callback
+        if (this.preUpdate != null) {
+            this.preUpdate(elapsed);
+        }
 
         // Update camera
         this.screenAspectRatio = this.screenWidth / this.screenHeight;

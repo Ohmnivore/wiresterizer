@@ -4,6 +4,9 @@
 // Ugly hack to force early Renderer class declaration
 /// <reference path="renderer.ts"/>
 
+// Ugly hack to force early WebGLRenderer class declaration
+/// <reference path="webgl_renderer.ts"/>
+
 // Ugly hack to force early Model class declaration
 /// <reference path="model.ts"/>
 
@@ -24,7 +27,9 @@ let near = 0.01;
 let far = 10000.0;
 
 
-class LogoScene extends WireRenderer {
+class LogoScene {
+
+    renderer: any; // WireWebGLRenderer or WireRenderer (canvas fallback)
 
     tweens: Tween[];
     rotationTween: Tween;
@@ -35,23 +40,34 @@ class LogoScene extends WireRenderer {
 
     constructor() {
         let canvas = element(canvasID) as HTMLCanvasElement;
-        super(canvas, frameRate, bgValue, wireValue);
+
+        // Launch WebGL or canvas renderer
+        this.renderer = new WireWebGLRenderer(canvas, frameRate, bgValue, wireValue);
+        if (!this.renderer.isSupportedOnBrowser()) {
+            let clonedCanvas = canvas.cloneNode() as HTMLCanvasElement;
+            let parent = canvas.parentNode as Node;
+            parent.removeChild(canvas);
+            parent.appendChild(clonedCanvas);
+            this.renderer = new WireRenderer(clonedCanvas, frameRate, bgValue, wireValue);
+        }
+        this.renderer.preUpdate = (elapsed: number) => this.preUpdate(elapsed);
+        this.renderer.launch();
 
         // Setup scene (-Z forward, Y up)
-        this.camera.setPerspective(fov, this.screenAspectRatio, near, far);
+        this.renderer.camera.setPerspective(fov, this.renderer.screenAspectRatio, near, far);
 
-        this.camera.position.x = 0.0;
-        this.camera.position.y = -0.2;
-        this.camera.position.z = 3.0;
+        this.renderer.camera.position.x = 0.0;
+        this.renderer.camera.position.y = -0.2;
+        this.renderer.camera.position.z = 3.0;
 
-        this.camera.target.x = 0.0;
-        this.camera.target.y = -0.2;
-        this.camera.target.z = 0.0;
+        this.renderer.camera.target.x = 0.0;
+        this.renderer.camera.target.y = -0.2;
+        this.renderer.camera.target.z = 0.0;
 
-        this.camera.useDirection = false;
+        this.renderer.camera.useDirection = false;
 
         let cube = new WireModel(array_cube)
-        this.models.push(cube)
+        this.renderer.models.push(cube)
 
         cube.pos.x = 0;
         cube.pos.y = 0;
@@ -76,7 +92,7 @@ class LogoScene extends WireRenderer {
         this.tiltUp = false;
     }
 
-    update(elapsed: number) {
+    preUpdate(elapsed: number) {
         // Use rotation tween
         let rotationValue = this.rotationTween.getValue();
         let rotationAngle;
@@ -88,8 +104,8 @@ class LogoScene extends WireRenderer {
         }
         let x = Math.sin(rotationAngle);
         let z = Math.cos(rotationAngle);
-        this.camera.position.x = x * 3.0;
-        this.camera.position.z = z * 3.0;
+        this.renderer.camera.position.x = x * 3.0;
+        this.renderer.camera.position.z = z * 3.0;
 
         // Use tilt tween
         let tiltValue = this.tiltTween.getValue();
@@ -105,14 +121,12 @@ class LogoScene extends WireRenderer {
             tiltAngle = (1.0 - tiltValue) * 2.0 * Math.PI;
             y = (Math.sin(tiltAngle) - 0.25) * 2.5;
         }
-        this.camera.position.y = y;
+        this.renderer.camera.position.y = y;
 
         // Update tweens
         for (let idx = 0; idx < this.tweens.length; ++idx) {
             this.tweens[idx].update(elapsed);
         }
-
-        super.update(elapsed);
     }
 
     finishedRotation(t: Tween) {
@@ -127,8 +141,8 @@ class LogoScene extends WireRenderer {
 }
 
 
-// Create renderer
-let renderer = new LogoScene();
+// Create scene
+let scene = new LogoScene();
 
 
 ///////////////////////////////////////////////////////////////////////////////
