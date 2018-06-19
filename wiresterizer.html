@@ -34,6 +34,16 @@
 .model-dropdown {
     display: inline-block;
 }
+
+.zoom-ui {
+    margin: auto;
+    width: 100%;
+    text-align: center;
+}
+
+.zoom-slider {
+    display: inline-block;
+}
 </style>
 
     </head>
@@ -53,6 +63,13 @@
             <option value="controller">Controller</option>
             <option value="logo">Logo</option>
         </select>
+    </p>
+
+    <br/>
+
+    <p class="zoom-ui">
+        Zoom:
+        <input type="range" id="zoom-slider" class="zoom-slider" min="0" max="100" value="50">
     </p>
 
     <script src="wiresterizer.js"></script>
