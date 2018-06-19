@@ -7,6 +7,8 @@ class WireOrbitCameraControl {
 
     private mousePressed: boolean;
 
+    private zoom: number;
+
     private lastX: number | null;
     private curX: number | null;
     private rotX: number;
@@ -24,6 +26,8 @@ class WireOrbitCameraControl {
 
         this.mousePressed = false;
 
+        this.zoom = 1.0;
+
         this.lastX = null;
         this.curX = null;
         this.rotX = -Math.PI / 4.0;
@@ -38,6 +42,10 @@ class WireOrbitCameraControl {
         document.addEventListener("mousedown", (e: MouseEvent) => this.mouseDownHandler(e), false);
         document.addEventListener("mouseup", (e: MouseEvent) => this.mouseUpHandler(e), false);
         document.addEventListener("mousemove", (e: MouseEvent) => this.mouseMoveHandler(e), false);
+    }
+
+    public setZoom(zoom: number) {
+        this.zoom = Math.max(0.05, zoom);
     }
 
     update(elapsed: number) {
@@ -67,8 +75,8 @@ class WireOrbitCameraControl {
 
         this.cam.target.copyFrom(this.focus);
 
-        this.cam.position.y = Math.sin(this.rotY) * this.distance;
-        this.cam.position.z = Math.cos(this.rotY) * this.distance;
+        this.cam.position.y = Math.sin(this.rotY) * this.distance * this.zoom;
+        this.cam.position.z = Math.cos(this.rotY) * this.distance * this.zoom;
 
         this.cam.position.x = Math.cos(this.rotX + Math.PI / 2.0) * this.cam.position.z;
         this.cam.position.z = Math.sin(this.rotX + Math.PI / 2.0) * this.cam.position.z;

@@ -59,7 +59,7 @@ class LogoScene {
 
         // Setup scene (-Z forward, Y up)
         this.renderer.camera.setPerspective(fov, this.renderer.screenAspectRatio, near, far);
-        this.camControl = new WireOrbitCameraControl(this.renderer.camera, 12.0, new vec3([0.0, 0.0, 0.0]), this.renderer.canvas);
+        this.camControl = new WireOrbitCameraControl(this.renderer.camera, 24.0, new vec3([0.0, 0.0, 0.0]), this.renderer.canvas);
 
         this.allModels = [];
         
@@ -76,9 +76,9 @@ class LogoScene {
         for (let idx = 0; idx < sources.length; ++idx) {
             let model = new WireModel(sources[idx]);
 
-            model.pos.x = 0;
-            model.pos.y = -1.75;
-            model.pos.z = 0;
+            model.pos.x = 0.0;
+            model.pos.y = 0.0;
+            model.pos.z = 0.0;
             model.updateMat();
 
             this.allModels.push(model);
@@ -86,44 +86,67 @@ class LogoScene {
 
         this.renderer.models = [this.allModels[6]];
 
-        let modelDropdown = element("model-dropdown");
+        let modelDropdown = element("model-dropdown") as HTMLSelectElement;
         modelDropdown.addEventListener("change", (e: Event) => this.onModelSelect(e));
+        this.updateModel(modelDropdown.value);
+
+        let zoomSlider = element("zoom-slider") as HTMLInputElement;
+        zoomSlider.addEventListener("change", (e: Event) => this.onZoomSlider(e));
+        zoomSlider.addEventListener("input", (e: Event) => this.onZoomSlider(e));
+        this.updateZoom(zoomSlider.valueAsNumber)
     }
 
     preUpdate(elapsed: number) {
         this.camControl.update(elapsed);
     }
 
+
     private onModelSelect(e: Event) {
         if (e.target != null) {
             let select = e.target as HTMLSelectElement;
+            this.updateModel(select.value);
+        }
+    }
 
-            if (select.value == "air_balloon") {
-                this.setModelIdx(0);
-            }
-            else if (select.value == "controller") {
-                this.setModelIdx(1);
-            }
-            else if (select.value == "logo") {
-                this.setModelIdx(2);
-            }
-            else if (select.value == "race_car") {
-                this.setModelIdx(3);
-            }
-            else if (select.value == "sail_ship") {
-                this.setModelIdx(4);
-            }
-            else if (select.value == "space_ship") {
-                this.setModelIdx(5);
-            }
-            else if (select.value == "viking_ship") {
-                this.setModelIdx(6);
-            }
+    private updateModel(value: string) {
+        if (value == "air_balloon") {
+            this.setModelIdx(0);
+        }
+        else if (value == "controller") {
+            this.setModelIdx(1);
+        }
+        else if (value == "logo") {
+            this.setModelIdx(2);
+        }
+        else if (value == "race_car") {
+            this.setModelIdx(3);
+        }
+        else if (value == "sail_ship") {
+            this.setModelIdx(4);
+        }
+        else if (value == "space_ship") {
+            this.setModelIdx(5);
+        }
+        else if (value == "viking_ship") {
+            this.setModelIdx(6);
         }
     }
 
     private setModelIdx(idx: number) {
         this.renderer.models[0] = this.allModels[idx];
+    }
+
+
+    private onZoomSlider(e: Event) {
+        if (e.target != null) {
+            let slider = e.target as HTMLInputElement;
+            this.updateZoom(slider.valueAsNumber);
+        }
+    }
+
+    private updateZoom(value: number) {
+        value = 1.0 - value / 100.0;
+        this.camControl.setZoom(value);
     }
 }
 
