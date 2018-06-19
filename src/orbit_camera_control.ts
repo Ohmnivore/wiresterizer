@@ -26,12 +26,12 @@ class WireOrbitCameraControl {
 
         this.lastX = null;
         this.curX = null;
-        this.rotX = 0.0;
+        this.rotX = -Math.PI / 4.0;
         this.rotMultiplier = 8.0;
 
         this.lastY = null;
         this.curY = null;
-        this.rotY = 0.0;
+        this.rotY = Math.PI / 8.0;
 
         this.cam.useDirection = false;
 
@@ -70,12 +70,18 @@ class WireOrbitCameraControl {
         this.cam.position.y = Math.sin(this.rotY) * this.distance;
         this.cam.position.z = Math.cos(this.rotY) * this.distance;
 
-        this.cam.position.x = Math.cos(this.rotX) * this.cam.position.z;
-        this.cam.position.z = Math.sin(this.rotX) * this.cam.position.z;
+        this.cam.position.x = Math.cos(this.rotX + Math.PI / 2.0) * this.cam.position.z;
+        this.cam.position.z = Math.sin(this.rotX + Math.PI / 2.0) * this.cam.position.z;
     }
 
     private mouseDownHandler(e: MouseEvent) {
-        this.mousePressed = true;
+        let relativeX = e.clientX - this.canvas.offsetLeft;
+        let relativeY = e.clientY - this.canvas.offsetTop;
+
+        if (relativeX > 0 && relativeX < this.canvas.width &&
+            relativeY > 0 && relativeY < this.canvas.height) {
+                this.mousePressed = true;
+        }
     }
 
     private mouseUpHandler(e: MouseEvent) {
@@ -86,11 +92,11 @@ class WireOrbitCameraControl {
         let relativeX = e.clientX - this.canvas.offsetLeft;
         let relativeY = e.clientY - this.canvas.offsetTop;
 
-        if (relativeX > 0 && relativeX < this.canvas.width) {
+        if ((relativeX > 0 && relativeX < this.canvas.width) || this.mousePressed) {
             this.curX = relativeX;
         }
 
-        if (relativeY > 0 && relativeY < this.canvas.height) {
+        if ((relativeY > 0 && relativeY < this.canvas.height) || this.mousePressed) {
             this.curY = relativeY;
         }
     }
