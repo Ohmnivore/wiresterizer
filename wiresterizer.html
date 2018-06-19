@@ -24,6 +24,16 @@
     max-height: 100%;
     overflow: auto;
 }
+
+.model-ui {
+    margin: auto;
+    width: 100%;
+    text-align: center;
+}
+
+.model-dropdown {
+    display: inline-block;
+}
 </style>
 
     </head>
@@ -31,6 +41,19 @@
     <body>
         <canvas id="wiresterizer" class="wiresterizer-center wiresterizer-canvas"></canvas>
     </body>
+
+    <p class="model-ui">
+        Model:
+        <select id="model-dropdown" class="model-dropdown">
+            <option value="viking_ship">Viking ship</option>
+            <option value="sail_ship">Sail ship</option>
+            <option value="space_ship">Space ship</option>
+            <option value="race_car">Race car</option>
+            <option value="air_balloon">Air balloon</option>
+            <option value="controller">Controller</option>
+            <option value="logo">Logo</option>
+        </select>
+    </p>
 
     <script src="wiresterizer.js"></script>
 

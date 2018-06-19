@@ -40,6 +40,7 @@ class LogoScene {
 
     renderer: any; // WireWebGLRenderer or WireRenderer (canvas fallback)
     camControl: WireOrbitCameraControl;
+    allModels: WireModel[];
 
     constructor() {
         let canvas = element(canvasID) as HTMLCanvasElement;
@@ -60,17 +61,69 @@ class LogoScene {
         this.renderer.camera.setPerspective(fov, this.renderer.screenAspectRatio, near, far);
         this.camControl = new WireOrbitCameraControl(this.renderer.camera, 12.0, new vec3([0.0, 0.0, 0.0]), this.renderer.canvas);
 
-        let model = new WireModel(array_sail_ship)
-        this.renderer.models.push(model)
+        this.allModels = [];
+        
+        let sources = [
+            array_air_balloon,
+            array_controller,
+            array_logo,
+            array_race_car,
+            array_sail_ship,
+            array_space_ship,
+            array_viking_ship
+        ];
 
-        model.pos.x = 0;
-        model.pos.y = -1.75;
-        model.pos.z = 0;
-        model.updateMat();
+        for (let idx = 0; idx < sources.length; ++idx) {
+            let model = new WireModel(sources[idx]);
+
+            model.pos.x = 0;
+            model.pos.y = -1.75;
+            model.pos.z = 0;
+            model.updateMat();
+
+            this.allModels.push(model);
+        }
+
+        this.renderer.models = [this.allModels[6]];
+
+        let modelDropdown = element("model-dropdown");
+        modelDropdown.addEventListener("change", (e: Event) => this.onModelSelect(e));
     }
 
     preUpdate(elapsed: number) {
         this.camControl.update(elapsed);
+    }
+
+    private onModelSelect(e: Event) {
+        if (e.target != null) {
+            let select = e.target as HTMLSelectElement;
+
+            if (select.value == "air_balloon") {
+                this.setModelIdx(0);
+            }
+            else if (select.value == "controller") {
+                this.setModelIdx(1);
+            }
+            else if (select.value == "logo") {
+                this.setModelIdx(2);
+            }
+            else if (select.value == "race_car") {
+                this.setModelIdx(3);
+            }
+            else if (select.value == "sail_ship") {
+                this.setModelIdx(4);
+            }
+            else if (select.value == "space_ship") {
+                this.setModelIdx(5);
+            }
+            else if (select.value == "viking_ship") {
+                this.setModelIdx(6);
+            }
+        }
+    }
+
+    private setModelIdx(idx: number) {
+        this.renderer.models[0] = this.allModels[idx];
     }
 }
 
