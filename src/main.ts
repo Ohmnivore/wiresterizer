@@ -13,6 +13,18 @@
 // Ugly hack to force early Tween class declaration
 /// <reference path="tween.ts"/>
 
+// Ugly hack to force early OrbitCamControl class declaration
+/// <reference path="orbit_camera_control.ts"/>
+
+// Ugly hack to force early model declaration
+/// <reference path="models/air_balloon.ts"/>
+/// <reference path="models/controller.ts"/>
+/// <reference path="models/logo.ts"/>
+/// <reference path="models/race_car.ts"/>
+/// <reference path="models/sail_ship.ts"/>
+/// <reference path="models/space_ship.ts"/>
+/// <reference path="models/viking_ship.ts"/>
+
 
 // Init variables
 let canvasID = "wiresterizer";
@@ -27,6 +39,7 @@ let far = 10000.0;
 class LogoScene {
 
     renderer: any; // WireWebGLRenderer or WireRenderer (canvas fallback)
+    camControl: WireOrbitCameraControl;
 
     constructor() {
         let canvas = element(canvasID) as HTMLCanvasElement;
@@ -45,28 +58,19 @@ class LogoScene {
 
         // Setup scene (-Z forward, Y up)
         this.renderer.camera.setPerspective(fov, this.renderer.screenAspectRatio, near, far);
+        this.camControl = new WireOrbitCameraControl(this.renderer.camera, 12.0, new vec3([0.0, 0.0, 0.0]), this.renderer.canvas);
 
-        this.renderer.camera.position.x = 0.0;
-        this.renderer.camera.position.y = -0.2;
-        this.renderer.camera.position.z = 8.0;
+        let model = new WireModel(array_sail_ship)
+        this.renderer.models.push(model)
 
-        this.renderer.camera.target.x = 0.0;
-        this.renderer.camera.target.y = -0.2;
-        this.renderer.camera.target.z = 0.0;
-
-        this.renderer.camera.useDirection = false;
-
-        // let cube = new WireModel(array_cube)
-        // this.renderer.models.push(cube)
-
-        // cube.pos.x = 0;
-        // cube.pos.y = -1.75;
-        // cube.pos.z = 0;
-        // cube.updateMat();
+        model.pos.x = 0;
+        model.pos.y = -1.75;
+        model.pos.z = 0;
+        model.updateMat();
     }
 
     preUpdate(elapsed: number) {
-        
+        this.camControl.update(elapsed);
     }
 }
 
