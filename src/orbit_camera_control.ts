@@ -42,6 +42,7 @@ class WireOrbitCameraControl {
         document.addEventListener("mousedown", (e: MouseEvent) => this.mouseDownHandler(e), false);
         document.addEventListener("mouseup", (e: MouseEvent) => this.mouseUpHandler(e), false);
         document.addEventListener("mousemove", (e: MouseEvent) => this.mouseMoveHandler(e), false);
+        document.addEventListener("wheel", (e: MouseWheelEvent) => this.mouseWheelHandler(e), false);
     }
 
     public setZoom(zoom: number) {
@@ -88,7 +89,7 @@ class WireOrbitCameraControl {
 
         if (relativeX > 0 && relativeX < this.canvas.width &&
             relativeY > 0 && relativeY < this.canvas.height) {
-                this.mousePressed = true;
+            this.mousePressed = true;
         }
     }
 
@@ -106,6 +107,20 @@ class WireOrbitCameraControl {
 
         if ((relativeY > 0 && relativeY < this.canvas.height) || this.mousePressed) {
             this.curY = relativeY;
+        }
+    }
+
+
+    private mouseWheelHandler(e: MouseWheelEvent) {
+        let relativeX = e.clientX - this.canvas.offsetLeft;
+        let relativeY = e.clientY - this.canvas.offsetTop;
+
+        if (this.mousePressed || (relativeX > 0 && relativeX < this.canvas.width &&
+            relativeY > 0 && relativeY < this.canvas.height)) {
+            if (e.deltaY != 0.0) {
+                let incr = e.deltaY / Math.abs(e.deltaY) * 0.1;
+                this.setZoom(this.zoom + incr);
+            }
         }
     }
 }
