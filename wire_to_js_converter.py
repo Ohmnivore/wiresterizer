@@ -15,15 +15,16 @@ def main(argv):
 
     # Print usage if wrong amount of command line arguments
     argc = len(argv)
-    if argc != 2:
-        print('Usage: wire_to_js_converter <*.wire file>')
+    if argc != 3:
+        print('Usage: wire_to_js_converter <*.wire file> <output directory>')
         exit(1)
 
     # Parse command line arguments
     wire_path = argv[1]
+    out_path = argv[2]
     wire_size = os.path.getsize(wire_path)
-    base_filename, _file_extension = os.path.splitext(wire_path)
-    output_path = os.path.join(os.path.dirname(wire_path), base_filename + OUTPUT_FILE_EXTENSION)
+    base_filename, _file_extension = os.path.splitext(os.path.basename(wire_path))
+    output_path = os.path.join(out_path, base_filename + OUTPUT_FILE_EXTENSION)
 
     with open(wire_path, "rb") as wire_file:
         with open(output_path, "w", encoding="utf8", newline="\n") as output_file:
