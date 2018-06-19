@@ -166,7 +166,7 @@ class WireRenderer {
                     this.mvpMat.multiplyVec3(this.vert2, this.vert2);
                     this.toCanvas(this.vert2);
 
-                    this.drawLine(this.vert1.x, this.vert1.y, this.vert2.x, this.vert2.y);
+                    this.CohenSutherlandLineClipAndDraw(this.vert1.x, this.vert1.y, this.vert2.x, this.vert2.y);
                     this.vert1.copyFrom(this.vert2);
                 }
 
@@ -196,6 +196,107 @@ class WireRenderer {
 
         this.screenBufferArrayU32[y * this.screenWidth + x] = this.wireValue;
     }
+
+
+    // Taken from https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
+
+    private static INSIDE = 0; // 0000
+    private static LEFT = 1;   // 0001
+    private static RIGHT = 2;  // 0010
+    private static BOTTOM = 4; // 0100
+    private static TOP = 8;    // 1000
+
+    // Compute the bit code for a point (x, y) using the clip rectangle
+    // bounded diagonally by (xmin, ymin), and (xmax, ymax)
+    private computeOutCode(x: number, y: number) {
+        let code = WireRenderer.INSIDE;    // initialised as being inside of [[clip window]]
+
+        if (x < 0.0)       // to the left of clip window
+            code |= WireRenderer.LEFT;
+        else if (x > this.screenWidth)   // to the right of clip window
+            code |= WireRenderer.RIGHT;
+        if (y < 0.0)       // below the clip window
+            code |= WireRenderer.BOTTOM;
+        else if (y > this.screenHeight)   // above the clip window
+            code |= WireRenderer.TOP;
+
+        return code;
+    }
+
+    // Cohen–Sutherland clipping algorithm clips a line from
+    // P0 = (x0, y0) to P1 = (x1, y1) against a rectangle with 
+    // diagonal from (xmin, ymin) to (xmax, ymax).
+    private CohenSutherlandLineClipAndDraw(x0: number, y0: number, x1: number, y1: number)
+    {
+        // compute outcodes for P0, P1, and whatever point lies outside the clip rectangle
+        let outcode0 = this.computeOutCode(x0, y0);
+        let outcode1 = this.computeOutCode(x1, y1);
+        let accept = false;
+
+        while (true) {
+            if (!(outcode0 | outcode1)) {
+                // bitwise OR is 0: both points inside window; trivially accept and exit loop
+                accept = true;
+                break;
+            }
+            else if (outcode0 & outcode1) {
+                // bitwise AND is not 0: both points share an outside zone (LEFT, RIGHT, TOP,
+                // or BOTTOM), so both must be outside window; exit loop (accept is false)
+                break;
+            }
+            else {
+                // failed both tests, so calculate the line segment to clip
+                // from an outside point to an intersection with clip edge
+                let x = 0;
+                let y = 0;
+
+                // At least one endpoint is outside the clip rectangle; pick it.
+                let outcodeOut = outcode0 ? outcode0 : outcode1;
+
+                // Now find the intersection point;
+                // use formulas:
+                //   slope = (y1 - y0) / (x1 - x0)
+                //   x = x0 + (1 / slope) * (ym - y0), where ym is ymin or ymax
+                //   y = y0 + slope * (xm - x0), where xm is xmin or xmax
+                // No need to worry about divide-by-zero because, in each case, the
+                // outcode bit being tested guarantees the denominator is non-zero
+                if (outcodeOut & WireRenderer.TOP) {         // point is above the clip window
+                    x = x0 + (x1 - x0) * (this.screenHeight - y0) / (y1 - y0);
+                    y = this.screenHeight;
+                }
+                else if (outcodeOut & WireRenderer.BOTTOM) { // point is below the clip window
+                    x = x0 + (x1 - x0) * (0.0 - y0) / (y1 - y0);
+                    y = 0.0;
+                }
+                else if (outcodeOut & WireRenderer.RIGHT) {  // point is to the right of clip window
+                    y = y0 + (y1 - y0) * (this.screenWidth - x0) / (x1 - x0);
+                    x = this.screenWidth;
+                }
+                else if (outcodeOut & WireRenderer.LEFT) {   // point is to the left of clip window
+                    y = y0 + (y1 - y0) * (0.0 - x0) / (x1 - x0);
+                    x = 0.0;
+                }
+
+                // Now we move outside point to intersection point to clip
+                // and get ready for next pass.
+                if (outcodeOut == outcode0) {
+                    x0 = x;
+                    y0 = y;
+                    outcode0 = this.computeOutCode(x0, y0);
+                }
+                else {
+                    x1 = x;
+                    y1 = y;
+                    outcode1 = this.computeOutCode(x1, y1);
+                }
+            }
+        }
+
+        if (accept) {
+            this.drawLine(x0, y0, x1, y1);
+        }
+    }
+
 
     // Taken from http://tech-algorithm.com/articles/drawing-line-using-bresenham-algorithm
     drawLine(x: number, y: number, x2: number, y2: number) {
