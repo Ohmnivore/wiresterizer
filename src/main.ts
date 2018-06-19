@@ -13,9 +13,6 @@
 // Ugly hack to force early Tween class declaration
 /// <reference path="tween.ts"/>
 
-// Ugly hack to force early model array declaration
-/// <reference path="cube.ts"/>
-
 
 // Init variables
 let canvasID = "wiresterizer";
@@ -30,13 +27,6 @@ let far = 10000.0;
 class LogoScene {
 
     renderer: any; // WireWebGLRenderer or WireRenderer (canvas fallback)
-
-    tweens: Tween[];
-    rotationTween: Tween;
-    tiltTween: Tween;
-
-    private turnLeft: boolean;
-    private tiltUp: boolean;
 
     constructor() {
         let canvas = element(canvasID) as HTMLCanvasElement;
@@ -58,7 +48,7 @@ class LogoScene {
 
         this.renderer.camera.position.x = 0.0;
         this.renderer.camera.position.y = -0.2;
-        this.renderer.camera.position.z = 3.0;
+        this.renderer.camera.position.z = 8.0;
 
         this.renderer.camera.target.x = 0.0;
         this.renderer.camera.target.y = -0.2;
@@ -66,77 +56,17 @@ class LogoScene {
 
         this.renderer.camera.useDirection = false;
 
-        let cube = new WireModel(array_cube)
-        this.renderer.models.push(cube)
+        // let cube = new WireModel(array_cube)
+        // this.renderer.models.push(cube)
 
-        cube.pos.x = 0;
-        cube.pos.y = 0;
-        cube.pos.z = 0;
-        cube.updateMat();
-
-
-        // Setup tweens
-        this.tweens = []
-
-        this.rotationTween = new Tween(array_curve_rotation);
-        this.tweens.push(this.rotationTween);
-        this.rotationTween.start(2.0, 1.0);
-        this.rotationTween.callback = ((t: Tween) => this.finishedRotation(t));
-
-        this.tiltTween = new Tween(array_curve_rotation);
-        this.tweens.push(this.tiltTween);
-        this.tiltTween.start(3.0, 0.0);
-        this.tiltTween.callback = ((t: Tween) => this.finishedTilt(t));
-
-        this.turnLeft = false;
-        this.tiltUp = false;
+        // cube.pos.x = 0;
+        // cube.pos.y = -1.75;
+        // cube.pos.z = 0;
+        // cube.updateMat();
     }
 
     preUpdate(elapsed: number) {
-        // Use rotation tween
-        let rotationValue = this.rotationTween.getValue();
-        let rotationAngle;
-        if (this.turnLeft) {
-            rotationAngle = rotationValue * 2.0 * Math.PI;
-        }
-        else {
-            rotationAngle = (1.0 - rotationValue) * 2.0 * Math.PI;
-        }
-        let x = Math.sin(rotationAngle);
-        let z = Math.cos(rotationAngle);
-        this.renderer.camera.position.x = x * 3.0;
-        this.renderer.camera.position.z = z * 3.0;
-
-        // Use tilt tween
-        let tiltValue = this.tiltTween.getValue();
-        let tiltAngle;
-        let y;
-        if (this.tiltUp) {
-            tiltAngle = (1.0 - tiltValue) * 2.0 * Math.PI;
-            y = (Math.sin(tiltAngle) - 0.25) * 2.5;
-            // This is actually the same thing as the else branch, for the time being
-            // It just looks better that way. Tweens will be reworked anyway.
-        }
-        else {
-            tiltAngle = (1.0 - tiltValue) * 2.0 * Math.PI;
-            y = (Math.sin(tiltAngle) - 0.25) * 2.5;
-        }
-        this.renderer.camera.position.y = y;
-
-        // Update tweens
-        for (let idx = 0; idx < this.tweens.length; ++idx) {
-            this.tweens[idx].update(elapsed);
-        }
-    }
-
-    finishedRotation(t: Tween) {
-        t.start(rand.floatRanged(1.0, 3.0), rand.floatRanged(0.0, 0.75));
-        this.turnLeft = rand.chanceRoll(0.4);
-    }
-
-    finishedTilt(t: Tween) {
-        t.start(rand.floatRanged(3.0, 5.0), rand.floatRanged(0.0, 0.75));
-        this.tiltUp = rand.chanceRoll(0.36);
+        
     }
 }
 
