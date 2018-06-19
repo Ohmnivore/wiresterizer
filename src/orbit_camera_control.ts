@@ -47,6 +47,7 @@ class WireOrbitCameraControl {
 
     public setZoom(zoom: number) {
         this.zoom = Math.max(0.05, zoom);
+        this.zoom = Math.min(1.0, this.zoom);
     }
 
     update(elapsed: number) {
@@ -120,6 +121,7 @@ class WireOrbitCameraControl {
             if (e.deltaY != 0.0) {
                 let incr = e.deltaY / Math.abs(e.deltaY) * 0.1;
                 this.setZoom(this.zoom + incr);
+                e.preventDefault();
             }
         }
     }
