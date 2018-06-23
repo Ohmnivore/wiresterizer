@@ -207,7 +207,6 @@ class WireWebGLRenderer {
                 this.vert1.y = model.verts[face_addr + 1];
                 this.vert1.z = model.verts[face_addr + 2];
                 this.mvpMat.multiplyVec3(this.vert1, this.vert1);
-                this.toCanvas(this.vert1);
 
                 for (let vert_idx = 1; vert_idx <= num_verts; ++vert_idx) {
                     let vert_2_addr = face_addr + (vert_idx % num_verts) * 3;
@@ -216,9 +215,40 @@ class WireWebGLRenderer {
                     this.vert2.y = model.verts[vert_2_addr + 1];
                     this.vert2.z = model.verts[vert_2_addr + 2];
                     this.mvpMat.multiplyVec3(this.vert2, this.vert2);
-                    this.toCanvas(this.vert2);
 
-                    this.CohenSutherlandLineClipAndDraw(this.vert1.x, this.vert1.y, this.vert2.x, this.vert2.y);
+                    let v1clip = this.vert1.z < this.camera.near;
+                    let v2clip = this.vert2.z < this.camera.near;
+
+                    // Skip if both clipped
+                    if (!(v1clip && v2clip)) {
+                        if (v1clip) {
+                            let tempVert1 = new vec3(this.vert1.xyz);
+                            let tempVert2 = new vec3(this.vert2.xyz);
+                            this.zClip(tempVert2, tempVert1)
+                            this.toCanvas(tempVert1);
+                            this.toCanvas(tempVert2);
+
+                            this.CohenSutherlandLineClipAndDraw(tempVert1.x, tempVert1.y, tempVert2.x, tempVert2.y);
+                        }
+                        else if (v2clip) {
+                            let tempVert1 = new vec3(this.vert1.xyz);
+                            let tempVert2 = new vec3(this.vert2.xyz);
+                            this.zClip(tempVert1, tempVert2)
+                            this.toCanvas(tempVert1);
+                            this.toCanvas(tempVert2);
+
+                            this.CohenSutherlandLineClipAndDraw(tempVert1.x, tempVert1.y, tempVert2.x, tempVert2.y);
+                        }
+                        else {
+                            let tempVert1 = new vec3(this.vert1.xyz);
+                            let tempVert2 = new vec3(this.vert2.xyz);
+                            this.toCanvas(tempVert1);
+                            this.toCanvas(tempVert2);
+
+                            this.CohenSutherlandLineClipAndDraw(tempVert1.x, tempVert1.y, tempVert2.x, tempVert2.y);
+                        }
+                    }
+
                     this.vert1.copyFrom(this.vert2);
                 }
 
@@ -255,6 +285,15 @@ class WireWebGLRenderer {
         this.context.enableVertexAttribArray(0);
         this.context.useProgram(this.screenProgram);
         this.context.drawArrays(this.context.TRIANGLE_STRIP, 0, 4);
+    }
+
+    zClip(constVert: vec3, vertToClip: vec3) {
+        let dist = constVert.z - vertToClip.z;
+        let newDist = constVert.z - this.camera.near;
+        let ratio = newDist / dist;
+        vertToClip.x = constVert.x + (vertToClip.x - constVert.x) * ratio;
+        vertToClip.y = constVert.y + (vertToClip.y - constVert.y) * ratio;
+        vertToClip.z = this.camera.near;
     }
 
     toCanvas(pos: vec3) {
