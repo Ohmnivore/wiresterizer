@@ -19,6 +19,7 @@
 // Ugly hack to force early model declaration
 /// <reference path="models/air_balloon.ts"/>
 /// <reference path="models/controller.ts"/>
+/// <reference path="models/cube.ts"/>
 /// <reference path="models/logo.ts"/>
 /// <reference path="models/race_car.ts"/>
 /// <reference path="models/sail_ship.ts"/>
@@ -66,6 +67,7 @@ class LogoScene {
         let sources = [
             array_air_balloon,
             array_controller,
+            array_cube,
             array_logo,
             array_race_car,
             array_sail_ship,
@@ -84,7 +86,7 @@ class LogoScene {
             this.allModels.push(model);
         }
 
-        this.renderer.models = [this.allModels[6]];
+        this.renderer.models = [this.allModels[7]];
 
         let modelDropdown = element("model-dropdown") as HTMLSelectElement;
         modelDropdown.addEventListener("change", (e: Event) => this.onModelSelect(e));
@@ -115,20 +117,23 @@ class LogoScene {
         else if (value == "controller") {
             this.setModelIdx(1);
         }
-        else if (value == "logo") {
+        else if (value == "cube") {
             this.setModelIdx(2);
         }
-        else if (value == "race_car") {
+        else if (value == "logo") {
             this.setModelIdx(3);
         }
-        else if (value == "sail_ship") {
+        else if (value == "race_car") {
             this.setModelIdx(4);
         }
-        else if (value == "space_ship") {
+        else if (value == "sail_ship") {
             this.setModelIdx(5);
         }
-        else if (value == "viking_ship") {
+        else if (value == "space_ship") {
             this.setModelIdx(6);
+        }
+        else if (value == "viking_ship") {
+            this.setModelIdx(7);
         }
     }
 

@@ -14,6 +14,7 @@ class WireModel {
         let idx = 0;
         while (idx < verts.length) {
             let verts_in_face = verts[idx];
+            idx += 3; // Normal
             idx += verts_in_face * 3;
             idx++;
             this.num_faces++;

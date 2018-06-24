@@ -203,9 +203,27 @@ class WireWebGLRenderer {
                 let num_verts = model.verts[face_addr];
                 face_addr++;
 
+                let normal = new vec4();
+                normal.x = model.verts[face_addr++];
+                normal.y = model.verts[face_addr++];
+                normal.z = model.verts[face_addr++];
+                normal.w = 0.0;
+
                 this.vert1.x = model.verts[face_addr];
                 this.vert1.y = model.verts[face_addr + 1];
                 this.vert1.z = model.verts[face_addr + 2];
+
+                let tempVert1 = new vec3(this.vert1.xyz);
+                model.mat.multiplyVec3(tempVert1, tempVert1);
+                vec3.difference(tempVert1, this.camera.position, tempVert1);
+                let tempNormal = new vec4(normal.xyzw);
+                model.mat.multiplyVec4(tempNormal, tempNormal);
+                let normalVec3 = new vec3(tempNormal.xyz);
+                if (vec3.dot(tempVert1, normalVec3) > 0) {
+                    face_addr += num_verts * 3;
+                    continue;
+                }
+
                 this.mvpMat.multiplyVec3(this.vert1, this.vert1);
 
                 for (let vert_idx = 1; vert_idx <= num_verts; ++vert_idx) {
