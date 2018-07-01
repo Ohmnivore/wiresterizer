@@ -85,8 +85,9 @@ class WireOrbitCameraControl {
     }
 
     private mouseDownHandler(e: MouseEvent) {
-        let relativeX = e.clientX - this.canvas.offsetLeft;
-        let relativeY = e.clientY - this.canvas.offsetTop;
+        let rect = this.canvas.getBoundingClientRect();
+        let relativeX = e.clientX - rect.left;
+        let relativeY = e.clientY - rect.top;
 
         if (relativeX > 0 && relativeX < this.canvas.width &&
             relativeY > 0 && relativeY < this.canvas.height) {
@@ -99,8 +100,9 @@ class WireOrbitCameraControl {
     }
 
     private mouseMoveHandler(e: MouseEvent) {
-        let relativeX = e.clientX - this.canvas.offsetLeft;
-        let relativeY = e.clientY - this.canvas.offsetTop;
+        let rect = this.canvas.getBoundingClientRect();
+        let relativeX = e.clientX - rect.left;
+        let relativeY = e.clientY - rect.top;
 
         if ((relativeX > 0 && relativeX < this.canvas.width) || this.mousePressed) {
             this.curX = relativeX;
@@ -113,8 +115,9 @@ class WireOrbitCameraControl {
 
 
     private mouseWheelHandler(e: MouseWheelEvent) {
-        let relativeX = e.clientX - this.canvas.offsetLeft;
-        let relativeY = e.clientY - this.canvas.offsetTop;
+        let rect = this.canvas.getBoundingClientRect();
+        let relativeX = e.clientX - rect.left;
+        let relativeY = e.clientY - rect.top;
 
         if (this.mousePressed || (relativeX > 0 && relativeX < this.canvas.width &&
             relativeY > 0 && relativeY < this.canvas.height)) {
